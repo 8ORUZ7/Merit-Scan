@@ -143,13 +143,51 @@ section { margin: 30px 32px; }
   display: none; max-height: 260px; overflow-y: auto; background: #fff; border-radius: 0 0 6px 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); padding: 12px 0;
 }
 .school-dropdown-content.show { display: block; }
-.account-card {
-  background: #fff; border-radius: 6px; border: 2px solid #222d32; padding: 16px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  font-size: 1em; display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+
+#account {
+  padding-top: 8px;
 }
-.account-card span { color: #222d32; }
-.account-card button { background: #1abc9c; color: #fff; border: none; border-radius: 3px; padding: 5px 12px; margin-left: 8px; cursor: pointer; font-size: .95em; transition: background .2s; }
-.account-card button:hover { background: #16a085; }
+#account > h2 {
+  margin: 24px 40px 16px 40px;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+#account .account-settings-list {
+  max-width: 1200px;          /* similar width to reference */
+  margin: 0 40px 24px 40px;   /* horizontal breathing room */
+  display: grid;              /* stable stacking across browsers */
+  grid-auto-rows: minmax(60px, auto);
+  row-gap: 18px;              /* vertical spacing between items */
+}
+
+#account .account-settings-item + .account-settings-item {
+  margin-top: 18px;
+}
+
+/* The green action rows (match look, no overlap) */
+#account .account-settings-item {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: 16px 32px;
+  border-radius: 8px;
+  background: #0f6352; /* dark teal */
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* Keep hover from earlier, but ensure contrast remains */
+#account .account-settings-item:hover {
+  background: #0e6b5a;
+  box-shadow: 0 2px 12px rgba(26,188,156,0.12);
+  border: 2px solid black;
+}
+
+/* The white panels that expand beneath each option */
+#account .account-option-modal {
+  margin: 10px 40px 0 40px;   /* align with the list container */
+}
 
 /* retrieval tables */
 .retrieval-controls { display: flex; gap: 14px; align-items: center; max-width: 900px; margin: 28px auto 24px auto; }
@@ -175,65 +213,27 @@ section { margin: 30px 32px; }
 .retrieval-table tbody tr:hover { background: #f6fefb; cursor: pointer; }
 
 /* account settings */
-/* account settings */
-.account-settings-section { background: #f4f7fa; min-height: 600px; padding: 18px 0 40px; }
-.account-settings-list {  max-width: 980px; margin-left: -150px;  margin-top: -50px; padding: 0 24px; display: block; }
-.account-title { font-size: 2.2rem; font-weight: 500; margin: 26px 0 16px 0; color: #222d32; }
-
-.account-settings-section .card,
-.account-settings-section .form-card {
-  background: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+.account-settings-list { max-width: 1200px; margin: 24px auto; display: flex; flex-direction: column; gap: 18px; }
+.account-settings-item {
+  background: #0f6352; border-radius: 8px; padding: 16px 32px; font-size: 1.12em; font-weight: 500; color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: background .2s, box-shadow .2s;
 }
-
-.account-setting-btn {
-  display: block;
-  min-height: 50px;
-  width: 120%;
-  margin-left: -50px;
-  margin: 18px 0;
-  background: #0e5f56; 
-  color: #fff;
-  border-radius: 14px;
-  padding: 22px 28px;
-  font-size: 1.25em;
-  font-weight: 500;
-  border: 2px solid #0a4a43; 
-  box-shadow: 0 4px 14px rgba(10, 40, 36, .15);
-  text-align: left;
-  cursor: pointer;
-  transition: background .2s, box-shadow .2s, transform .02s;
-}
-.account-setting-btn:hover { background: #13766a; box-shadow: 0 6px 18px rgba(10,40,36,.18); }
-.account-setting-btn:active { transform: translateY(1px); }
-
-
-
-/* dropdown */
+.account-settings-item * { color: inherit; }
+.account-settings-item:hover { background: #e1f7f4; color: black; border: 2px solid black; box-shadow: 0 2px 12px rgba(26,188,156,0.12); }
 .account-option-modal {
-  display:none;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.07);
-  padding:23px 32px 18px 32px;
-  margin:8px 0 18px 0;
-  max-width:980px;
-  font-size:1.07em;
-  position:relative;
-  border:2px solid #dfe6ef;
+  border: 2px solid black; display: none; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 20px 32px 18px 32px; margin: 10px 0 0 0; font-size: 1em;
 }
-.account-option-modal label { display:block; margin-bottom:7px; font-weight:bold; color:#222d32; }
-.account-option-modal input[type="text"], .account-option-modal input[type="email"], .account-option-modal input[type="password"] {
-  width:100%; padding:13px 12px; font-size:1.06em; border-radius:6px; border:1.5px solid #e0e6ed; margin-bottom:15px; background:#f9fafc; transition: border-color .17s, box-shadow .17s; color:#222d32;
+.account-option-modal.show { display: block; }
+.account-option-modal label { display: block; margin-bottom: 8px; font-weight: bold; }
+.account-option-modal input[type="text"], .account-option-modal input[type="password"] {
+  width: 100%; padding: 7px 12px; font-size: 1em; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 12px; color:#222d32;
 }
-.account-option-modal .btn-row { display:flex; gap:16px; margin-top:18px; justify-content:flex-start; }
-.account-option-modal button { background:#18c0a5; color:#fff; border:none; border-radius:6px; padding:10px 32px; font-size:1.08em; cursor:pointer; transition: background .2s; font-weight:bold; }
-.account-option-modal button.cancel-btn { background:#19bcaa; }
-.account-option-modal button:hover { background:#0f6352; }
-.account-option-modal button.cancel-btn:hover { background:#e74c3c; color:#fff; }
-
+.account-option-modal button {
+  background: #1abc9c; color: #fff; border: none; border-radius: 4px; padding: 7px 18px; font-size: 1em; margin-right: 10px; cursor: pointer; margin-bottom: 7px; transition: background .2s;
+}
+.account-option-modal button:hover { background: #16a085; }
+.account-option-modal p { margin-bottom: 18px; color: #222d32; }
 
 /* Logs */
 .logs-dropdowns { max-width: 1200px; margin: 24px auto; }
@@ -310,5 +310,8 @@ section { margin: 30px 32px; }
   .notification-card { padding: 14px 9px; font-size: .99em; }
   .notification-detail { font-size: .95em; left: 0; top: 60px; }
   .modal-content { width: 98vw; min-width: 200px; margin: 16px auto; padding: 20px 7vw 18px 7vw; }
-
+  #account > h2 { margin: 16px 12px; font-size: 1.6rem; }
+  #account .account-settings-list { margin: 0 12px 18px 12px; row-gap: 12px; }
+  #account .account-settings-item + .account-settings-item { margin-top: 12px; }
+  #account .account-option-modal { margin: 10px 12px 0 12px; }
 }
