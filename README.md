@@ -1,12 +1,13 @@
 # Merit Scan — Frontend Preview
 
+
 ## Quick start
 
-Prerequisites
+**Prerequisites**
 - Node.js 18+ recommended
 - npm, pnpm, or yarn
 
-Install and run
+**Install and run**
 ```bash
 # install deps
 npm install
@@ -18,36 +19,22 @@ npm run dev
 npm run build
 ```
 
-Open the app at http://localhost:8000 (your dev server port).
+*Open the app at http://localhost:8000 (your dev server port).*
 
 ---
 
-## Routing overview
+## Routes
+| Area                         | Link                                                                 |
+|-----------------------------|----------------------------------------------------------------------|
+| Master Account              | https://merit-scan.vercel.app/master/dashboard                       |
+| Admin Account               | https://merit-scan.vercel.app/admin                                  |
+| QR Scan Portal              | https://merit-scan.vercel.app/admin/portal                           |
+| Pending Registration        | https://merit-scan.vercel.app/admin/pending                          |
+| Student Account             | https://merit-scan.vercel.app/student                                |
+| Login Account for Student   | https://merit-scan.vercel.app/student/login                          |
+| Registration                | https://merit-scan.vercel.app/register                               |
+| Login for Admin Account     | https://merit-scan.vercel.app/login                                  |
 
-All routes are public in this preview (no auth gate). Document titles are set from `App.jsx`.
-
-Public
-- `/` — Home
-- `/login` — Generic login page (for marketing/preview)
-- `/register` — Registration page (preview only)
-
-Master (standalone layout, managed inside `Master.jsx`)
-- `/master/*` — Master area and its internal screens
-  - Note: Master sets its own document title internally (see `Master.jsx`)
-
-Admin (standalone layout)
-- `/admin` — Admin dashboard
-- `/admin/portal` — QR Scan Portal (camera page)
-- `/admin/pending` — Admin “Pending” page (review/approval preview)
-
-Student
-- `/student` — Student dashboard
-- `/student/login` — Student login page (dark theme)
-
-Preview-only disclaimer
-- These routes exist for UI demonstration. Forms submit to client-side handlers (alerts, in-memory state) and do not call a backend.
-
----
 
 ## What’s implemented?
 
@@ -60,52 +47,52 @@ Preview-only disclaimer
 
 ### Student area
 
-Highlights
+**Highlights**
 - Final “Merit Points” dashboard matches the HTML reference (2×2 centered KPI cards; blue border; subtle shadow; colored values)
-- Sidebar sections: Dashboard (Merit Points), Appeal (Submit a ticket), Settings (Account)
+- **Sidebar sections**: Dashboard (Merit Points), Appeal (Submit a ticket), Settings (Account)
 - Section switching updates the active link and breadcrumb
-- Edit Profile modal:
+- **Edit Profile modal**:
   - Change name and profile photo (FileReader for preview)
   - Sidebar avatar updates live after save
-- Account settings:
+- **Account settings**:
   - Change email and password (alerts)
   - Profile image preview (FileReader)
   - Level select toggles between College, High School, Grade School fields (only one group visible at a time)
-- Ticket form:
+- **Ticket form**:
   - “Submit a ticket” shows alert and resets form
-- Login page:
+- **Login page**:
   - Applies a dark theme via adding/removing `student-login` class on `<html>` and `<body>`
   - Email/password input validation on the client (pattern/title)
-- Logout: alert then reload (mirrors the static HTML behavior)
+- **Logout**: alert then reload (mirrors the static HTML behavior)
 
-Styling notes
+**Styling notes**
 - Login + Student styles merged into `student/styles.css`, both Student and StudentLogin import the same file.
 - A safeguard ensures the Student main has light background even if “login theme” classes linger.
 
 ### Admin area
 
-Dashboard
+**Dashboard**
 - KPI cards for present, absent, late (absent derived from present vs total; late randomized for demo)
 - Bar chart of Major Attendance (Chart.js v4 via UMD CDN)
   - If Chart.js fails to load, falls back to CSS-based bars
 - Rank table and compact list (Top 10 in a table, Top 50 in a select)
 - “Portal status” button and BroadcastChannel heartbeat with `/admin/portal` (online/offline indicator)
 
-Students
+**Students**
 - Searchable table (name, year, email, QR, major)
 - Add/Edit/Delete with modal forms (in-memory state)
 - Clicking a row opens “Edit” modal; “Delete” asks for confirmation
 
-Daily Logs
+**Daily Logs**
 - Date filter (client-side)
 - Export to XLSX (via `xlsx` UMD CDN)
   - If the library fails to load, an alert explains the limitation
 
-Awards
+**Awards**
 - Top 10 by merit (table)
 - “Generate Cert” simulation (shows a recent action status for ~90s)
 
-Account (matches reference design)
+**Account (matches reference design)**
 - Big dark-teal action buttons:
   - Change Email
   - Change Password
@@ -114,11 +101,11 @@ Account (matches reference design)
   - Details (valid year and extension request)
 - Each opens a white panel below with respective form/actions
 
-School
+**School**
 - Per-major counts derived from mock students
 - Static sample for verified admins and validity dates
 
-Sidebar collapse behavior
+**Sidebar collapse behavior**
 - The collapsed sidebar is a 60px rail
 - “Excess text” is hidden during collapse (menu text is fully hidden)
 - Sidebar has `overflow-x: hidden` to prevent bleed outside the rail
