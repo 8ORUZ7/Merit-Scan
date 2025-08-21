@@ -424,19 +424,26 @@ function SectionModification() {
 
         {/* school a */}
         <div className="school-group">
-          <button className="school-dropdown-btn" onClick={()=>setOpen((o)=>({ ...o, schoolA: !o.schoolA }))}>
+          <button
+            className={`school-dropdown-btn ${open.schoolA ? 'active' : ''}`}
+            onClick={()=>setOpen((o)=>({ ...o, schoolA: !o.schoolA }))}
+          >
             School A (school_id: 101)
           </button>
           <div className={`school-dropdown-content ${open.schoolA ? 'show' : ''}`} id="schoolA">
             {filterList(listA).map((card, idx)=>(
               <div className="account-card" key={`a-${idx}`}>
-                <span>Name: {card.name}</span>
-                <span>Role: {card.role}</span>
-                <span>School: {card.school} (school_id: {card.id})</span>
-                <span>Level: {card.level}</span>
-                <button className="update-btn" onClick={()=>openUpdateModal(card.name, card.role, card.email, card.level, card.pass, card.id)}>Update</button>
-                <button>Rename</button>
-                <button>Delete</button>
+                <div className="account-info">
+                  <span><strong>Name:</strong> {card.name}</span>
+                  <span><strong>Role:</strong> {card.role}</span>
+                  <span><strong>School:</strong> {card.school} (school_id: {card.id})</span>
+                  <span><strong>Level:</strong> {card.level}</span>
+                </div>
+                <div className="account-actions">
+                  <button className="account-action-btn" onClick={()=>openUpdateModal(card.name, card.role, card.email, card.level, card.pass, card.id)}>Update</button>
+                  <button className="account-action-btn">Rename</button>
+                  <button className="account-action-btn">Delete</button>
+                </div>
               </div>
             ))}
           </div>
@@ -444,19 +451,26 @@ function SectionModification() {
 
         {/* school b */}
         <div className="school-group">
-          <button className="school-dropdown-btn" onClick={()=>setOpen((o)=>({ ...o, schoolB: !o.schoolB }))}>
+          <button
+            className={`school-dropdown-btn ${open.schoolB ? 'active' : ''}`}
+            onClick={()=>setOpen((o)=>({ ...o, schoolB: !o.schoolB }))}
+          >
             School B (school_id: 102)
           </button>
           <div className={`school-dropdown-content ${open.schoolB ? 'show' : ''}`} id="schoolB">
             {filterList(listB).map((card, idx)=>(
               <div className="account-card" key={`b-${idx}`}>
-                <span>Name: {card.name}</span>
-                <span>Role: {card.role}</span>
-                <span>School: {card.school} (school_id: {card.id})</span>
-                <span>Level: {card.level}</span>
-                <button className="update-btn" onClick={()=>openUpdateModal(card.name, card.role, card.email, card.level, card.pass, card.id)}>Update</button>
-                <button>Rename</button>
-                <button>Delete</button>
+                <div className="account-info">
+                  <span><strong>Name:</strong> {card.name}</span>
+                  <span><strong>Role:</strong> {card.role}</span>
+                  <span><strong>School:</strong> {card.school} (school_id: {card.id})</span>
+                  <span><strong>Level:</strong> {card.level}</span>
+                </div>
+                <div className="account-actions">
+                  <button className="account-action-btn" onClick={()=>openUpdateModal(card.name, card.role, card.email, card.level, card.pass, card.id)}>Update</button>
+                  <button className="account-action-btn">Rename</button>
+                  <button className="account-action-btn">Delete</button>
+                </div>
               </div>
             ))}
           </div>
