@@ -24,8 +24,8 @@ export default function Master() {
 
   const currentPath = location.pathname.split('/').filter(Boolean)
   const activeSection = currentPath[1] || 'dashboard'
-  const breadcrumb = SECTION_TITLES[activeSection] || 'Dashboard'
-  document.title = `Merit Scan Master — ${breadcrumb}`
+  const breadcrumb = SECTION_TITLES[activeSection] || 'Master'
+  document.title = `${breadcrumb}`
 
   function handleEditProfileSave(e) {
     e.preventDefault()
