@@ -8,7 +8,7 @@ export default function Student() {
   useEffect(() => {
     document.documentElement.classList.remove('student-login')
     document.body.classList.remove('student-login')
-    document.title = 'Merit Scan Student Account'
+    document.title = 'Merit Scan Student'
   }, [])
 
   const [collapsed, setCollapsed] = useState(false)
@@ -330,4 +330,5 @@ export default function Student() {
       </main>
     </div>
   )
+
 }
