@@ -5,7 +5,7 @@ export default function StudentLogin() {
   useEffect(() => {
     document.documentElement.classList.add('student-login')
     document.body.classList.add('student-login')
-    document.title = 'Merit Scan — Login'
+    document.title = "Student Login'
     return () => {
       document.documentElement.classList.remove('student-login')
       document.body.classList.remove('student-login')
@@ -66,4 +66,5 @@ export default function StudentLogin() {
       </footer>
     </>
   )
+
 }
