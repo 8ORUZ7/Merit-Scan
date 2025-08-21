@@ -138,11 +138,49 @@ section { margin: 30px 32px; }
   width: 100%; background: #222d32; color: #fff; text-align: left; font-size: 1.12em; font-weight: bold; letter-spacing: 1px;
   border: none; border-radius: 6px 6px 0 0; padding: 14px 22px; cursor: pointer; outline: none; margin-bottom: 0; transition: background .2s;
 }
+/* show open header in teal like the screenshot */
+.school-dropdown-btn.active { background: #16a085; }
 .school-dropdown-btn:hover { background: #1abc9c; }
 .school-dropdown-content {
   display: none; max-height: 260px; overflow-y: auto; background: #fff; border-radius: 0 0 6px 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); padding: 12px 0;
 }
 .school-dropdown-content.show { display: block; }
+
+/* account cards inside modification (fixed look from second image) */
+.school-dropdown-content .account-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fff;
+  border: 2px solid #222d32;
+  border-radius: 8px;
+  padding: 16px 22px;
+  margin: 12px 16px;
+}
+.account-card .account-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  color: #222d32;
+  font-size: 1.02em;
+}
+.account-card .account-actions {
+  display: flex;
+  gap: 14px;
+}
+.account-action-btn {
+  background: #1abc9c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.98em;
+  cursor: pointer;
+  transition: background .18s, transform .02s;
+}
+.account-action-btn:hover { background: #16a085; }
+.account-action-btn:active { transform: translateY(1px); }
 
 #account {
   padding-top: 8px;
@@ -314,4 +352,7 @@ section { margin: 30px 32px; }
   #account .account-settings-list { margin: 0 12px 18px 12px; row-gap: 12px; }
   #account .account-settings-item + .account-settings-item { margin-top: 12px; }
   #account .account-option-modal { margin: 10px 12px 0 12px; }
+  /* stack account card on small screens */
+  .school-dropdown-content .account-card { flex-direction: column; align-items: flex-start; }
+  .account-card .account-actions { width: 100%; justify-content: flex-end; }
 }
