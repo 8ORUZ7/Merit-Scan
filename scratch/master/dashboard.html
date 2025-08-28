@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Account</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="responsive-patch.css"> 
+    <!-- Core QR Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+    <script src="https://unpkg.com/html5-qrcode" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" defer></script>
+</head>
+<body>
+    <a href="#mainContent" class="skip-link">Skip to main content</a>
+    <div class="sidebar-backdrop"></div>
+    <div class="app-container" id="appRoot">
+        <!-- ================= SIDEBAR ================= -->
+         <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Merit Scan</span>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="true">&#9776;</button>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-img">
+                    <img id="profilePicSidebar" src="https://i.imgur.com/4Z5b1aH.png" alt="Master Account">
+                </div>
+                <div class="profile-details">
+                    <span class="profile-name" id="profileNameSidebar">Master Account</span>
+                    <span class="profile-status online" id="onlineStatus">Online</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu" id="mainNav">
+                <li class="sidebar-section">REPORTS</li>
+                <li><a href="#" class="active" data-content="dashboard">Dashboard</a></li>
+                <li><a href="#" data-content="schools">Schools</a></li>
+                <li><a href="#" data-content="notification">Notification</a></li>
+                <li class="menu-gap"></li>
+                <li class="sidebar-section">MANAGE</li>
+                <li><a href="#" data-content="generate">QR Code Generator</a></li>
+                <li><a href="#" data-content="modification">Modification</a></li>
+                <li><a href="#" data-content="retrieval">Retrieval</a></li>
+                <li class="menu-gap"></li>
+                <li class="sidebar-section">SETTINGS</li>
+                <li><a href="#" data-content="account">Account</a></li>
+                <li><a href="#" data-content="logs">Logs</a></li>
+            </ul>
+        </nav>
+        <!-- ================= END SIDEBAR ================= -->
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content" id="mainContent" tabindex="-1">
+            <header class="main-header">
+                <span class="main-project" id="projectName">Master Account</span>
+                <span class="main-breadcrumb">
+                    Home &gt; <span id="breadcrumb">Dashboard</span>
+                </span>
+                <div class="profile-actions">
+                    <button id="editProfileBtn" class="profile-action-btn">Edit Profile</button>
+                    <button id="logoutBtn" class="profile-action-btn logout">Log Out</button>
+                </div>
+            </header>
+
+            <!-- ================= EDIT PROFILE MODAL ================= -->
+            <div id="editProfileModal" class="modal" aria-hidden="true">
+                <div class="modal-content ms-modal-skin" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
+                    <button class="close" id="closeModalBtn" aria-label="Close">&times;</button>
+                    <h2 id="editProfileTitle">Edit Profile</h2>
+                    <div class="ms-modal-grid">
+                        <form id="editProfileForm" autocomplete="off">
+                            <div class="ms-field">
+                                <label for="editName">Name:</label>
+                                <input class="ms-input" type="text" id="editName" name="editName" required>
+                            </div>
+                            <div class="ms-field">
+                                <label for="editProfilePic">Profile Picture:</label>
+                                <input class="ms-input" type="file" id="editProfilePic" name="editProfilePic" accept="image/*">
+                                <small class="ms-help">(PNG/JPG, up to 2MB)</small>
+                            </div>
+                            <div class="ms-actions justify-end">
+                                <button type="submit" class="ms-btn primary">Save Changes</button>
+                                <button type="button" class="ms-btn neutral" id="cancelEditProfile">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- ================= END EDIT PROFILE MODAL ================= -->
+
+            <!-- ================= DASHBOARD SECTION ================= -->
+            <section class="dashboard" id="dashboard" style="display:block;">
+                <h1 class="visually-hidden">Dashboard Overview</h1>
+                <div class="dashboard-cards">
+                    <div class="dashboard-card" data-card="active-schools">
+                        <div class="card-title">Active Schools</div>
+                        <div class="card-count" id="activeSchoolCount">2</div>
+                        <div class="card-info">school_id: <span id="activeSchoolList">101, 102</span></div>
+                        <a href="#" class="card-link">More info &#9432;</a>
+                    </div>
+                    <div class="dashboard-card" data-card="issues">
+                        <div class="card-title">Report Issues</div>
+                        <div class="card-count" id="issueCount">5</div>
+                        <div class="card-info">Errors in website</div>
+                        <a href="#" class="card-link">More info &#9432;</a>
+                    </div>
+                    <div class="dashboard-card" data-card="online">
+                        <div class="card-title">Online Accounts</div>
+                        <div class="card-count" id="onlineAccounts">14</div>
+                        <div class="card-info">Student/Admin</div>
+                        <a href="#" class="card-link">More info &#9432;</a>
+                    </div>
+                    <div class="dashboard-card" data-card="offline">
+                        <div class="card-title">Offline Accounts</div>
+                        <div class="card-count" id="offlineAccounts">4</div>
+                        <div class="card-info">Student/Admin</div>
+                        <a href="#" class="card-link">More info &#9432;</a>
+                    </div>
+                </div>
+                <div class="dashboard-charts">
+                    <div class="chart-card">
+                        <div class="chart-title">Active School Stats</div>
+                        <div class="chart-bar">
+                            <div class="bar-group">
+                                <label>School ID 101</label>
+                                <div class="bar" style="width:70%;" data-metric="101-online">Online: 8</div>
+                            </div>
+                            <div class="bar-group">
+                                <label>School ID 102</label>
+                                <div class="bar" style="width:40%;" data-metric="102-online">Online: 6</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card-issue">
+                        <div class="chart-title">Issues Summary</div>
+                        <div class="chart-bar">
+                            <div class="bar-group">
+                                <label>Error Reports</label>
+                                <div class="bar error" style="width:50%;" data-metric="err-1">3</div>
+                            </div>
+                            <div class="bar-group">
+                                <label>Website Issues</label>
+                                <div class="bar error" style="width:30%;" data-metric="err-2">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <section aria-labelledby="dashNotesHeading" style="margin:40px 32px 0 32px;">
+                    <h2 id="dashNotesHeading" style="font-size:1.05em;margin:0 0 12px;">Notes</h2>
+                    <p style="max-width:760px;font-size:.85em;line-height:1.55;color:#555;">
+                        Dashboard values are placeholders; integrate your data layer to replace them dynamically.
+                    </p>
+                </section>
+            </section>
+            <!-- ================= END DASHBOARD ================= -->
+
+            <!-- ================= SCHOOLS SECTION ================= -->
+            <section id="schools" style="display:none;">
+                <h2>Registered Schools</h2>
+                <div class="school-list" id="schoolList">
+                    <div class="school-card" data-school="101">
+                        <span class="school-name">School A</span>
+                        <span class="school-id">school_id: 101</span>
+                        <span class="school-online">Online Accounts: 8</span>
+                        <span class="school-offline">Offline Accounts: 2</span>
+                        <span class="school-portal online">Attendance Portal: Online</span>
+                    </div>
+                    <div class="school-card" data-school="102">
+                        <span class="school-name">School B</span>
+                        <span class="school-id">school_id: 102</span>
+                        <span class="school-online">Online Accounts: 6</span>
+                        <span class="school-offline">Offline Accounts: 2</span>
+                        <span class="school-portal offline">Attendance Portal: Offline</span>
+                    </div>
+                </div>
+            </section>
+            <!-- ================= END SCHOOLS ================= -->
+
+            <!-- ================= NOTIFICATION SECTION ================= -->
+            <section id="notification" style="display:none;">
+                <h2>Notifications</h2>
+                <div class="notification-section">
+                    <div class="notification-group-title">School Registration Approvals</div>
+                    <div class="notification-list" id="approvalNotifList">
+                        <div class="notification-card approval notification-unread" id="notif-approval-1" data-notif="approval-1">
+                            <span class="notif-title">School Registration Approval</span>
+                            <span>Valid ID:
+                                <img src="https://i.imgur.com/4Z5b1aH.png" alt="ID" class="id-img">
+                            </span>
+                            <button class="approve-btn" onclick="openApprovalModal(event)">Approve</button>
+                            <span class="notif-status-dot" aria-label="Unread"></span>
+                        </div>
+                    </div>
+
+                    <!-- Approval Modal -->
+                    <div id="approvalModal" class="modal" aria-hidden="true">
+                        <div class="modal-content ms-modal-skin wide" role="dialog" aria-modal="true" aria-labelledby="approvalTitle">
+                            <button class="close" onclick="closeApprovalModal()" aria-label="Close">&times;</button>
+                            <h3 id="approvalTitle">School Registration Approval</h3>
+                            <div class="ms-modal-grid">
+                                <form id="approvalForm" autocomplete="off">
+                                    <div class="ms-section-label">Submitted Info</div>
+                                    <div class="ms-field"><label>Name</label><input class="ms-input" type="text" value="Jane Doe" readonly></div>
+                                    <div class="ms-field"><label>Profession</label><input class="ms-input" type="text" value="Admin" readonly></div>
+                                    <div class="ms-field"><label>Email</label><input class="ms-input" type="email" value="jane.doe@schoola.com" readonly></div>
+                                    <div class="ms-field"><label>Password</label><input class="ms-input" type="password" value="********" readonly></div>
+                                    <div class="ms-field"><label>Levels</label><input class="ms-input" type="text" value="Level 1" readonly></div>
+                                    <div class="ms-field"><label>School/Campus</label><input class="ms-input" type="text" value="School A" readonly></div>
+                                    <div class="ms-field">
+                                        <label>Upload Valid ID</label>
+                                        <div style="display:flex;align-items:center;gap:12px;">
+                                            <img src="https://i.imgur.com/4Z5b1aH.png" alt="ID" class="approval-modal-id-img" style="border:2px solid #1abc9c;">
+                                            <small class="ms-help">Provided by applicant</small>
+                                        </div>
+                                    </div>
+                                    <hr class="ms-divider">
+                                    <div class="ms-section-label">Approve & Assign</div>
+                                    <div class="ms-field"><label for="approvalSchoolName">Name of School</label><input class="ms-input" type="text" id="approvalSchoolName" required></div>
+                                    <div class="ms-field"><label for="approvalSchoolID">School ID</label><input class="ms-input" type="text" id="approvalSchoolID" required></div>
+                                    <div class="ms-field"><label for="approvalLevel">Level</label>
+                                        <select class="ms-input" id="approvalLevel" required>
+                                            <option value="" disabled selected>Select Level</option>
+                                            <option value="Grade School">Grade School</option>
+                                            <option value="High School">High School</option>
+                                            <option value="College">College</option>
+                                        </select>
+                                    </div>
+                                    <div class="ms-field"><label for="approvalSchoolYear">School Year</label><input class="ms-input" type="number" id="approvalSchoolYear" min="2024" max="2100" value="2026" required></div>
+                                    <span id="schoolIDError" class="ms-inline-error">School ID is required.</span>
+                                    <div class="ms-actions justify-end">
+                                        <button type="submit" class="ms-btn primary">Approve Registration</button>
+                                        <button type="button" class="ms-btn neutral" onclick="closeApprovalModal()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification-group-title" style="margin-top:32px;">Report Issues</div>
+                    <div class="notification-list" id="issueNotifList">
+                        <div class="notification-card report notification-unread" id="notif2" data-notif="report-1" onclick="toggleNotificationDetail('notif2')" aria-expanded="false" aria-controls="notif2-detail">
+                            <span class="notif-title">Report Issue</span>
+                            <span>From Student (school_id: 101)</span>
+                            <span>Issue: Website Error</span>
+                            <span class="notif-status-dot" aria-label="Unread"></span>
+                            <div class="notification-detail" id="notif2-detail" role="region" aria-label="Issue details">
+                                <p>The student encountered an error when logging in to the school portal at 08:01 AM. Issue details: '504 Gateway Timeout'.</p>
+                            </div>
+                        </div>
+                        <div class="notification-card report notification-read" onclick="toggleNotificationDetail('notif3')" id="notif3" data-notif="report-2">
+                            <span class="notif-title">Report Issue</span>
+                            <span>From Admin (school_id: 102)</span>
+                            <span>Issue: Login Problem</span>
+                            <span class="notif-status-dot" aria-label="Read"></span>
+                            <div class="notification-detail" id="notif3-detail">
+                                <p>Admin reported login issues at 08:02 AM. Issue details: 'Account locked after 3 failed attempts.'</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ================= END NOTIFICATION ================= -->
+
+            <!-- ================= QR GENERATOR SECTION ================= -->
+            <section id="generate" style="display:none;">
+                <h2>QR Code Generator &amp; Confirmation</h2>
+                <div class="generate-wrapper">
+                    <div class="generate-left">
+                        <h3>Create / Download QR Code</h3>
+                        <form id="qrGenerateForm" onsubmit="return false;">
+                            <div class="form-row">
+                                <label for="qrInputCode">Enter Code (or leave blank for random):</label>
+                                <div class="qr-input-row">
+                                    <input type="text" id="qrInputCode" maxlength="64" placeholder="e.g. KN3L20DF" autocomplete="off" onkeyup="this.value=this.value.toUpperCase();">
+                                    <select id="qrRandomLen" class="mini-select" title="Random length">
+                                        <option value="8" selected>Len 8</option>
+                                        <option value="10">Len 10</option>
+                                        <option value="12">Len 12</option>
+                                    </select>
+                                    <button type="button" class="btn secondary" onclick="MS_generateRandomCode(parseInt(document.getElementById('qrRandomLen').value,10))">Randomize</button>
+                                </div>
+                            </div>
+                            <div class="form-row dual">
+                                <div>
+                                    <label for="qrSizeSelect">Size (px)</label>
+                                    <select id="qrSizeSelect">
+                                        <option value="200">200</option>
+                                        <option value="256" selected>256</option>
+                                        <option value="300">300</option>
+                                        <option value="400">400</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="qrEccSelect">Error Correction</label>
+                                    <select id="qrEccSelect">
+                                        <option value="M">M</option>
+                                        <option value="Q">Q</option>
+                                        <option value="H" selected>H</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label><input type="checkbox" id="qrAddPadding" checked> Add 20px white padding (quiet zone)</label>
+                            </div>
+                            <div class="form-row">
+                                <button type="button" class="btn primary" onclick="MS_generateQRCode()">Generate &amp; Verify</button>
+                                <button type="button" class="btn ghost" onclick="MS_manualDecodeCurrent()">Manual Decode Now</button>
+                                <button type="button" class="btn ghost" onclick="MS_selfTestLoop()" title="Generate & verify many random codes (dev)">Self Test (Loop)</button>
+                            </div>
+                        </form>
+                        <div id="qrResultContainer" class="qr-result">
+                            <div id="qrCodeCanvasWrapper">
+                                <canvas id="qrRenderedCanvas" width="0" height="0" aria-label="Generated QR code canvas"></canvas>
+                            </div>
+                            <div class="qr-meta">
+                                <div>Original Input: <span id="qrOriginalCode" class="code-pill"></span></div>
+                                <div>Normalized Stored: <span id="qrCurrentCode" class="code-pill strong"></span></div>
+                                <div>Local Decode Status: <span id="qrLocalDecodeStatus" class="badge badge-idle">Idle</span></div>
+                            </div>
+                            <div class="qr-actions">
+                                <button id="downloadQRBtn" class="btn neutral" disabled onclick="MS_downloadQRCode()">Download PNG</button>
+                                <button class="btn secondary" onclick="MS_downloadUpscaled()">Download x4</button>
+                                <button class="btn ghost" onclick="MS_copyCode()" id="copyCodeBtn" disabled>Copy Code</button>
+                                <button class="btn danger" onclick="MS_clearQRCode()">Clear</button>
+                            </div>
+                        </div>
+                        <div class="qr-generated-list">
+                            <h4>Generated Codes (Session)</h4>
+                            <ul id="qrGeneratedCodesUl" class="code-list"></ul>
+                        </div>
+                    </div>
+                    <div class="generate-right">
+                        <h3>Confirm / Scan QR Code</h3>
+                        <p class="hint">Tips: larger size, medium screen brightness, avoid glare, 15–25cm distance, steady camera.</p>
+                        <div id="qrReaderContainer">
+                            <div id="qrReader" class="qr-reader-box"></div>
+                            <div class="scan-controls">
+                                <button id="startScannerBtn" class="btn primary" onclick="MS_startScanner()" disabled>Start Scanner</button>
+                                <button id="stopScannerBtn" class="btn danger" onclick="MS_stopScanner()" disabled>Stop Scanner</button>
+                            </div>
+                        </div>
+                        <div class="scan-status">
+                            <div>Last Raw Scan: <span id="scanResultRaw" class="code-inline">(none)</span></div>
+                            <div>Normalized: <span id="scanResultText" class="badge badge-idle">Idle</span></div>
+                            <div>Registration Status: <span id="scanRegStatus" class="badge badge-idle">Unknown</span></div>
+                        </div>
+                        <hr>
+                        <h4>Fallback: Upload Image to Decode</h4>
+                        <input type="file" id="qrImageFile" accept="image/*" onchange="MS_decodeFromImage(event)">
+                        <div id="imageDecodeStatus" class="hint"></div>
+                        <canvas id="qrHiddenCanvas" style="display:none;"></canvas>
+                        <hr>
+                        <h4>Manual Code Check</h4>
+                        <div class="manual-check-row">
+                            <input type="text" id="manualCheckInput" placeholder="Enter code to verify" onkeyup="this.value=this.value.toUpperCase();">
+                            <button class="btn secondary" onclick="MS_manualCheck()">Check</button>
+                        </div>
+                        <div id="manualCheckStatus" class="hint"></div>
+                    </div>
+                </div>
+            </section>
+            <!-- ================= END QR GENERATOR ================= -->
+
+            <!-- ================= MODIFICATION SECTION ================= -->
+            <section id="modification" style="display:none;">
+                <h2>Account Modification</h2>
+                <p>Add, update, or delete student/admin accounts (grouped by school/campus).</p>
+                <div class="modification-dropdowns">
+                    <input type="text" id="modificationSearchInput" class="modification-search-bar" placeholder="Search accounts..." onkeyup="filterModificationAccounts()">
+                    <div class="school-group">
+                        <button class="school-dropdown-btn" onclick="toggleDropdown('schoolA')">
+                            School A (school_id: 101)
+                        </button>
+                        <div class="school-dropdown-content" id="schoolA">
+                            <div class="account-card">
+                                <span>Name: John Doe</span>
+                                <span>Role: Student</span>
+                                <span>School: School A (school_id: 101)</span>
+                                <span>Level: College</span>
+                                <button class="update-btn" onclick="openUpdateModal('John Doe', 'Student', 'john@example.com', 'Level 1', 'passwordA', '101')">Update</button>
+                                <button class="delete-btn" onclick="alert('Delete placeholder')">Delete</button>
+                            </div>
+                            <div class="account-card">
+                                <span>Name: Mike Cruz</span>
+                                <span>Role: Student</span>
+                                <span>School: School A (school_id: 101)</span>
+                                <span>Level: College</span>
+                                <button class="update-btn" onclick="openUpdateModal('Mike Cruz', 'Student', 'mike@example.com', 'Level 2', 'passwordB', '101')">Update</button>
+                                <button class="delete-btn" onclick="alert('Delete placeholder')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="school-group">
+                        <button class="school-dropdown-btn" onclick="toggleDropdown('schoolB')">
+                            School B (school_id: 102)
+                        </button>
+                        <div class="school-dropdown-content" id="schoolB">
+                            <div class="account-card">
+                                <span>Name: Jane Smith</span>
+                                <span>Role: Admin</span>
+                                <span>School: School B (school_id: 102)</span>
+                                <span>Level: High School</span>
+                                <button class="update-btn" onclick="openUpdateModal('Jane Smith', 'Admin', 'jane@example.com', 'Level 3', 'passwordC', '102')">Update</button>
+                                <button class="delete-btn" onclick="alert('Delete placeholder')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update Modal -->
+                <div id="updateModal" class="modal" aria-hidden="true">
+                    <div class="modal-content ms-modal-skin" role="dialog" aria-modal="true" aria-labelledby="updateAccountTitle">
+                        <button class="close" id="closeUpdateModalBtn" aria-label="Close">&times;</button>
+                        <h2 id="updateAccountTitle">Update Account</h2>
+                        <div class="ms-modal-grid">
+                            <form id="updateAccountForm" autocomplete="off">
+                                <div class="ms-field"><label for="updateName">Name:</label><input class="ms-input" type="text" id="updateName" required></div>
+                                <div class="ms-field"><label for="updateRole">Role:</label><input class="ms-input" type="text" id="updateRole" required></div>
+                                <div class="ms-field"><label for="updateEmail">Email:</label><input class="ms-input" type="email" id="updateEmail" required></div>
+                                <!-- LEVEL (original hidden to preserve existing JS compatibility) -->
+                                <input type="hidden" id="updateLevel">
+
+                                <!-- New Level Selection UI -->
+                                <div class="ms-field">
+                                    <label style="display:block;margin-bottom:4px;">Level:</label>
+                                    <div class="ms-radio-group" style="display:flex;gap:16px;flex-wrap:wrap;">
+                                        <label><input type="radio" name="updateLevelMain" id="radioGradeSchool" value="Grade School"> Grade School</label>
+                                        <label><input type="radio" name="updateLevelMain" id="radioHighSchool" value="High School"> High School</label>
+                                        <label><input type="radio" name="updateLevelMain" id="radioCollege" value="College"> College</label>
+                                    </div>
+
+                                    <!-- Grade School Panel -->
+                                    <div id="panelGradeSchool" style="display:none;margin-top:8px;">
+                                        <label for="updateGradeSchoolLevel" style="font-size:.85em;">Select Grade (1-6)</label>
+                                        <select class="ms-input" id="updateGradeSchoolLevel">
+                                            <option value="">-- Select Grade --</option>
+                                            <option>Grade 1</option>
+                                            <option>Grade 2</option>
+                                            <option>Grade 3</option>
+                                            <option>Grade 4</option>
+                                            <option>Grade 5</option>
+                                            <option>Grade 6</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- High School Panel -->
+                                    <div id="panelHighSchool" style="display:none;margin-top:8px;">
+                                        <label for="updateHighSchoolLevel" style="font-size:.85em;">Select Grade (7-12)</label>
+                                        <select class="ms-input" id="updateHighSchoolLevel">
+                                            <option value="">-- Select Grade --</option>
+                                            <option>Grade 7</option>
+                                            <option>Grade 8</option>
+                                            <option>Grade 9</option>
+                                            <option>Grade 10</option>
+                                            <option>Grade 11</option>
+                                            <option>Grade 12</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- College Panel -->
+                                    <div id="panelCollege" style="display:none;margin-top:8px;">
+                                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                                            <div style="flex:1;min-width:160px;">
+                                                <label for="updateCollegeYear" style="font-size:.75em;display:block;margin-bottom:2px;">Year Level</label>
+                                                <select class="ms-input" id="updateCollegeYear">
+                                                    <option value="">-- Year Level --</option>
+                                                    <option>1st Year</option>
+                                                    <option>2nd Year</option>
+                                                    <option>3rd Year</option>
+                                                    <option>4th Year</option>
+                                                </select>
+                                            </div>
+                                            <div style="flex:1;min-width:160px;">
+                                                <label for="updateCollegeMajor" style="font-size:.75em;display:block;margin-bottom:2px;">Major</label>
+                                                <select class="ms-input" id="updateCollegeMajor">
+                                                    <option value="">-- Major --</option>
+                                                    <option>BSCS</option>
+                                                    <option>BSPSYCH</option>
+                                                    <option>BSEDUC</option>
+                                                    <option>BSTM</option>
+                                                    <option>BSHM</option>
+                                                    <option>BSBA</option>
+                                                    <option>BSMM</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ms-field"><label for="updatePassword">Password:</label><input class="ms-input" type="password" id="updatePassword"></div>
+                                <div class="ms-field"><label for="updateSchoolID">School ID:</label><input class="ms-input" type="text" id="updateSchoolID"></div>
+
+                                <!-- Added: QR Code Text -->
+                                <div class="ms-field">
+                                    <label for="updateQrCode">QR Code:</label>
+                                    <input class="ms-input" type="text" id="updateQrCode" placeholder="e.g. KN3L20DF" maxlength="64" onkeyup="this.value=this.value.toUpperCase();">
+                                </div>
+
+                                <!-- Added: Upload QR Code -->
+                                <div class="ms-field">
+                                    <label for="updateQrFile">Upload the QR Code:</label>
+                                    <input class="ms-input" type="file" id="updateQrFile" accept="image/*">
+                                    <small class="ms-help">Upload an image of the QR code (PNG/JPG)</small>
+                                </div>
+
+                                <div class="ms-actions justify-end">
+                                    <button type="submit" class="ms-btn primary">Save Changes</button>
+                                    <button type="button" class="ms-btn neutral" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Local script for new level logic (kept inside modification section only) -->
+                <script>
+                (function(){
+                    const modal = document.getElementById('updateModal');
+                    const hidden = document.getElementById('updateLevel');
+                    function showPanel(){
+                        document.getElementById('panelGradeSchool').style.display='none';
+                        document.getElementById('panelHighSchool').style.display='none';
+                        document.getElementById('panelCollege').style.display='none';
+                        const sel = document.querySelector('input[name="updateLevelMain"]:checked');
+                        if(!sel) return;
+                        if(sel.value==='Grade School') document.getElementById('panelGradeSchool').style.display='block';
+                        if(sel.value==='High School') document.getElementById('panelHighSchool').style.display='block';
+                        if(sel.value==='College') document.getElementById('panelCollege').style.display='block';
+                        syncHidden();
+                    }
+                    function syncHidden(){
+                        const main = document.querySelector('input[name="updateLevelMain"]:checked');
+                        if(!main){ hidden.value=''; return; }
+                        let value = main.value;
+                        if(main.value==='Grade School'){
+                            const g = document.getElementById('updateGradeSchoolLevel').value;
+                            if(g) value += ' - ' + g;
+                        } else if(main.value==='High School'){
+                            const h = document.getElementById('updateHighSchoolLevel').value;
+                            if(h) value += ' - ' + h;
+                        } else if(main.value==='College'){
+                            const y=document.getElementById('updateCollegeYear').value;
+                            const m=document.getElementById('updateCollegeMajor').value;
+                            if(y) value += ' - ' + y;
+                            if(m) value += ' ('+m+')';
+                        }
+                        hidden.value = value;
+                    }
+                    // Event wiring
+                    document.querySelectorAll('input[name="updateLevelMain"]').forEach(r=>{
+                        r.addEventListener('change', showPanel);
+                    });
+                    ['updateGradeSchoolLevel','updateHighSchoolLevel','updateCollegeYear','updateCollegeMajor']
+                        .forEach(id=>{
+                            const sel=document.getElementById(id);
+                            if(sel) sel.addEventListener('change', syncHidden);
+                        });
+
+                    // Observe modal display to initialize selections from hidden value set by existing JS (openUpdateModal)
+                    const observer = new MutationObserver(()=>{
+                        if(modal.style.display==='block'){
+                            const lvl = hidden.value || '';
+                            // Mapping of legacy "Level X" to College Year
+                            if(/Level\s*1\b/i.test(lvl)){ document.getElementById('radioCollege').checked=true; document.getElementById('updateCollegeYear').value='1st Year'; }
+                            else if(/Level\s*2\b/i.test(lvl)){ document.getElementById('radioCollege').checked=true; document.getElementById('updateCollegeYear').value='2nd Year'; }
+                            else if(/Level\s*3\b/i.test(lvl)){ document.getElementById('radioCollege').checked=true; document.getElementById('updateCollegeYear').value='3rd Year'; }
+                            else if(/Level\s*4\b/i.test(lvl)){ document.getElementById('radioCollege').checked=true; document.getElementById('updateCollegeYear').value='4th Year'; }
+                            else if(/^Grade School/i.test(lvl)){ document.getElementById('radioGradeSchool').checked=true; }
+                            else if(/^High School/i.test(lvl)){ document.getElementById('radioHighSchool').checked=true; }
+                            else if(/^College/i.test(lvl)){ document.getElementById('radioCollege').checked=true; }
+                            showPanel();
+                            syncHidden();
+                        }
+                    });
+                    observer.observe(modal,{attributes:true,attributeFilter:['style']});
+                })();
+                </script>
+            </section>
+            <!-- ================= END MODIFICATION ================= -->
+
+            <!-- ================= RETRIEVAL SECTION ================= -->
+            <section id="retrieval" style="display:none;">
+                <h2>Account Retrieval</h2>
+                <p>Retrieve or manually add admin/school accounts to a registered school (developer only).</p>
+                <div class="retrieval-controls">
+                    <input type="text" id="retrievalSearch" class="retrieval-search" placeholder="Search admin accounts..." onkeyup="filterRetrievalTable()">
+                    <button class="retrieval-btn" onclick="showAddAccountModal()">Add Account</button>
+                </div>
+                <div class="retrieval-tables">
+                    <div class="retrieval-table-group">
+                        <button class="retrieval-table-dropdown-btn" onclick="toggleRetrievalTable('tableA')">School A (school_id: 101)</button>
+                        <div class="retrieval-table-dropdown-content" id="tableA">
+                            <table class="retrieval-table">
+                                <thead>
+                                <tr><th>Name</th><th>Profession</th><th>Email</th><th>Level</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                <tr onclick="showRetrieveAccountModal(this)" data-school="School A" data-schoolid="101">
+                                    <td>John Doe</td><td>Professor</td><td>john.doe@schoola.com</td><td>College</td><td>Online</td>
+                                </tr>
+                                <tr onclick="showRetrieveAccountModal(this)" data-school="School A" data-schoolid="101">
+                                    <td>Mike Cruz</td><td>Professor</td><td>mike.cruz@schoola.com</td><td>College</td><td>Offline</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="retrieval-table-group">
+                        <button class="retrieval-table-dropdown-btn" onclick="toggleRetrievalTable('tableB')">School B (school_id: 102)</button>
+                        <div class="retrieval-table-dropdown-content" id="tableB">
+                            <table class="retrieval-table">
+                                <thead>
+                                <tr><th>Name</th><th>Profession</th><th>Email</th><th>Level</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                <tr onclick="showRetrieveAccountModal(this)" data-school="School B" data-schoolid="102">
+                                    <td>Jane Smith</td><td>Teacher</td><td>jane.smith@schoolb.com</td><td>High School</td><td>Online</td>
+                                </tr>
+                                <tr onclick="showRetrieveAccountModal(this)" data-school="School B" data-schoolid="102">
+                                    <td>Albert Lee</td><td>Teacher</td><td>albert.lee@schoolb.com</td><td>High School</td><td>Offline</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Account Modal -->
+                <div id="addAccountModal" class="modal" aria-hidden="true">
+                    <div class="modal-content ms-modal-skin" role="dialog" aria-modal="true" aria-labelledby="addAccountTitle">
+                        <button class="close" onclick="closeAddAccountModal()" aria-label="Close">&times;</button>
+                        <h3 id="addAccountTitle">Add Account</h3>
+                        <div class="ms-modal-grid">
+                            <form id="addAccountForm" autocomplete="off">
+                                <div class="ms-field"><label for="addName">Name:</label><input class="ms-input" type="text" id="addName" required></div>
+                                <div class="ms-field"><label for="addProfession">Profession:</label><input class="ms-input" type="text" id="addProfession" required></div>
+                                <div class="ms-field"><label for="addEmail">Email:</label><input class="ms-input" type="email" id="addEmail" required></div>
+                                <div class="ms-field"><label for="addPassword">New Password:</label><input class="ms-input" type="password" id="addPassword" required></div>
+                                <div class="ms-field"><label for="addLevel">Levels:</label><input class="ms-input" type="text" id="addLevel" required></div>
+                                <div class="ms-field"><label for="addSchoolName">School Name:</label><input class="ms-input" type="text" id="addSchoolName" required></div>
+                                <div class="ms-field"><label for="addSchoolID">School_ID:</label><input class="ms-input" type="text" id="addSchoolID" required></div>
+                                <div class="ms-actions justify-end">
+                                    <button type="submit" class="ms-btn primary">Add Account</button>
+                                    <button type="button" class="ms-btn neutral" onclick="closeAddAccountModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Retrieve Account Modal -->
+                <div id="retrieveAccountModal" class="modal" aria-hidden="true">
+                    <div class="modal-content ms-modal-skin" role="dialog" aria-modal="true" aria-labelledby="retrieveAccountTitle">
+                        <button class="close" onclick="closeRetrieveAccountModal()" aria-label="Close">&times;</button>
+                        <h3 id="retrieveAccountTitle">Retrieve Account</h3>
+                        <div class="ms-modal-grid">
+                            <form id="retrieveAccountForm" autocomplete="off">
+                                <div class="ms-field"><label for="retrieveName">Name:</label><input class="ms-input" type="text" id="retrieveName" required></div>
+                                <div class="ms-field"><label for="retrieveProfession">Profession:</label><input class="ms-input" type="text" id="retrieveProfession" required></div>
+                                <div class="ms-field"><label for="retrieveEmail">Email:</label><input class="ms-input" type="email" id="retrieveEmail" required></div>
+
+                                <!-- Hidden original field (value consumed by existing JS) -->
+                                <input type="hidden" id="retrieveLevel">
+
+                                <!-- New Level Selection UI -->
+                                <div class="ms-field">
+                                    <label style="display:block;margin-bottom:4px;">Level:</label>
+                                    <div style="display:flex;gap:16px;flex-wrap:wrap;" class="ms-radio-group">
+                                        <label><input type="radio" name="retrieveLevelMain" id="retrieveRadioGradeSchool" value="Grade School"> Grade School</label>
+                                        <label><input type="radio" name="retrieveLevelMain" id="retrieveRadioHighSchool" value="High School"> High School</label>
+                                        <label><input type="radio" name="retrieveLevelMain" id="retrieveRadioCollege" value="College"> College</label>
+                                    </div>
+
+                                    <!-- Grade School Panel -->
+                                    <div id="retrievePanelGradeSchool" style="display:none;margin-top:8px;">
+                                        <label for="retrieveGradeSchoolLevel" style="font-size:.85em;">Select Grade (1-6)</label>
+                                        <select class="ms-input" id="retrieveGradeSchoolLevel">
+                                            <option value="">-- Select Grade --</option>
+                                            <option>Grade 1</option>
+                                            <option>Grade 2</option>
+                                            <option>Grade 3</option>
+                                            <option>Grade 4</option>
+                                            <option>Grade 5</option>
+                                            <option>Grade 6</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- High School Panel -->
+                                    <div id="retrievePanelHighSchool" style="display:none;margin-top:8px;">
+                                        <label for="retrieveHighSchoolLevel" style="font-size:.85em;">Select Grade (7-12)</label>
+                                        <select class="ms-input" id="retrieveHighSchoolLevel">
+                                            <option value="">-- Select Grade --</option>
+                                            <option>Grade 7</option>
+                                            <option>Grade 8</option>
+                                            <option>Grade 9</option>
+                                            <option>Grade 10</option>
+                                            <option>Grade 11</option>
+                                            <option>Grade 12</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- College Panel -->
+                                    <div id="retrievePanelCollege" style="display:none;margin-top:8px;">
+                                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                                            <div style="flex:1;min-width:160px;">
+                                                <label for="retrieveCollegeYear" style="font-size:.75em;display:block;margin-bottom:2px;">Year Level</label>
+                                                <select class="ms-input" id="retrieveCollegeYear">
+                                                    <option value="">-- Year Level --</option>
+                                                    <option>1st Year</option>
+                                                    <option>2nd Year</option>
+                                                    <option>3rd Year</option>
+                                                    <option>4th Year</option>
+                                                </select>
+                                            </div>
+                                            <div style="flex:1;min-width:160px;">
+                                                <label for="retrieveCollegeMajor" style="font-size:.75em;display:block;margin-bottom:2px;">Major</label>
+                                                <select class="ms-input" id="retrieveCollegeMajor">
+                                                    <option value="">-- Major --</option>
+                                                    <option>BSCS</option>
+                                                    <option>BSPSYCH</option>
+                                                    <option>BSEDUC</option>
+                                                    <option>BSTM</option>
+                                                    <option>BSHM</option>
+                                                    <option>BSBA</option>
+                                                    <option>BSMM</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ms-field"><label for="retrievePassword">New Password:</label><input class="ms-input" type="password" id="retrievePassword" required></div>
+                                <div class="ms-field"><label for="retrieveSchoolName">School Name:</label><input class="ms-input" type="text" id="retrieveSchoolName" required></div>
+                                <div class="ms-field"><label for="retrieveSchoolID">School_ID:</label><input class="ms-input" type="text" id="retrieveSchoolID" required></div>
+                                <div class="ms-actions justify-end">
+                                    <button type="submit" class="ms-btn primary">Retrieve Account</button>
+                                    <button type="button" class="ms-btn neutral" onclick="closeRetrieveAccountModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Local script for new retrieve level logic -->
+                <script>
+                (function(){
+                    const modal = document.getElementById('retrieveAccountModal');
+                    const hidden = document.getElementById('retrieveLevel');
+
+                    function showPanel(){
+                        document.getElementById('retrievePanelGradeSchool').style.display='none';
+                        document.getElementById('retrievePanelHighSchool').style.display='none';
+                        document.getElementById('retrievePanelCollege').style.display='none';
+                        const sel = document.querySelector('input[name="retrieveLevelMain"]:checked');
+                        if(!sel) return;
+                        if(sel.value==='Grade School') document.getElementById('retrievePanelGradeSchool').style.display='block';
+                        if(sel.value==='High School') document.getElementById('retrievePanelHighSchool').style.display='block';
+                        if(sel.value==='College') document.getElementById('retrievePanelCollege').style.display='block';
+                        syncHidden();
+                    }
+
+                    function syncHidden(){
+                        const main = document.querySelector('input[name="retrieveLevelMain"]:checked');
+                        if(!main){ hidden.value=''; return; }
+                        let value = main.value;
+                        if(main.value==='Grade School'){
+                            const g=document.getElementById('retrieveGradeSchoolLevel').value;
+                            if(g) value += ' - ' + g;
+                        } else if(main.value==='High School'){
+                            const h=document.getElementById('retrieveHighSchoolLevel').value;
+                            if(h) value += ' - ' + h;
+                        } else if(main.value==='College'){
+                            const y=document.getElementById('retrieveCollegeYear').value;
+                            const m=document.getElementById('retrieveCollegeMajor').value;
+                            if(y) value += ' - ' + y;
+                            if(m) value += ' ('+m+')';
+                        }
+                        hidden.value=value;
+                    }
+
+                    // Wire events
+                    document.querySelectorAll('input[name="retrieveLevelMain"]').forEach(r=>{
+                        r.addEventListener('change', showPanel);
+                    });
+                    ['retrieveGradeSchoolLevel','retrieveHighSchoolLevel','retrieveCollegeYear','retrieveCollegeMajor']
+                        .forEach(id=>{
+                            const el=document.getElementById(id);
+                            if(el) el.addEventListener('change', syncHidden);
+                        });
+
+                    // Observe modal open to initialize radios based on hidden value (set externally)
+                    const observer = new MutationObserver(()=>{
+                        if(modal.style.display==='block'){
+                            const lvl = (hidden.value||'').trim();
+                            if(/^Grade School/i.test(lvl)) document.getElementById('retrieveRadioGradeSchool').checked=true;
+                            else if(/^High School/i.test(lvl)) document.getElementById('retrieveRadioHighSchool').checked=true;
+                            else if(/^College/i.test(lvl)) document.getElementById('retrieveRadioCollege').checked=true;
+                            showPanel();
+                            // Attempt to map simple "College" (no details) to nothing else
+                            syncHidden();
+                        }
+                    });
+                    observer.observe(modal,{attributes:true,attributeFilter:['style']});
+                })();
+                </script>
+            </section>
+            <!-- ================= END RETRIEVAL ================= -->
+
+            <!-- ================= ACCOUNT SETTINGS SECTION ================= -->
+            <section id="account" style="display:none;">
+                <h2>Account Settings</h2>
+                <div class="account-settings-list ms-accounts">
+                    <div class="account-settings-item" onclick="showAccountOption('changePassword')">
+                        <span class="ms-acc-title">Change Password</span>
+                        <span class="ms-acc-caret"></span>
+                    </div>
+                    <div id="changePasswordOption" class="account-option-modal ms-panel-skin">
+                        <form id="changePasswordForm" class="ms-inline-fields ms-gap-sm">
+                            <label class="ms-field">
+                                <span class="ms-label">Old Password</span>
+                                <input type="password" id="oldPassword" class="ms-input" required>
+                            </label>
+                            <label class="ms-field">
+                                <span class="ms-label">New Password</span>
+                                <input type="password" id="newPassword" class="ms-input" required>
+                            </label> 
+                            <br>
+                            <div class="ms-actions ms-actions"> 
+                                <button type="submit" class="ms-btn primary">Change Password</button>
+                                <button type="button" class="ms-btn neutral" onclick="closeAccountOption('changePassword')">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="account-settings-item" onclick="showAccountOption('renameAccount')">
+                        <span class="ms-acc-title">Rename Account Name</span>
+                        <span class="ms-acc-caret"></span>
+                    </div>
+                    <div id="renameAccountOption" class="account-option-modal ms-panel-skin">
+                        <form id="renameAccountForm" class="ms-inline-fields ms-gap-sm">
+                            <label class="ms-field">
+                                <span class="ms-label">New Account Name</span>
+                                <input type="text" id="newAccountName" class="ms-input" required>
+                            </label>
+                            <div class="ms-actions ms-actions-inline">
+                                <button type="submit" class="ms-btn primary">Rename</button>
+                                <button type="button" class="ms-btn neutral" onclick="closeAccountOption('renameAccount')">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="account-settings-item" onclick="showAccountOption('backupDatabase')">
+                        <span class="ms-acc-title">Backup Database</span>
+                        <span class="ms-acc-caret"></span>
+                    </div>
+                    <div id="backupDatabaseOption" class="account-option-modal ms-panel-skin">
+                        <p class="ms-note">Download your database backup as:</p>
+                        <div class="ms-actions">
+                            <button type="button" class="ms-btn secondary" onclick="alert('Downloading as .json file...')">.json file</button>
+                            <button type="button" class="ms-btn secondary" onclick="alert('Downloading as .xlsx file...')">.xlsx file</button>
+                            <button type="button" class="ms-btn neutral" onclick="closeAccountOption('backupDatabase')">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div class="account-settings-item" onclick="showAccountOption('duplicateMaster')">
+                        <span class="ms-acc-title">Duplicate Master Account</span>
+                        <span class="ms-acc-caret"></span>
+                    </div>
+                    <div id="duplicateMasterOption" class="account-option-modal ms-panel-skin">
+                        <p class="ms-warning-box">Are you sure you want to duplicate the Master Account?</p>
+                        <div class="ms-actions">
+                            <button type="button" class="ms-btn danger" onclick="alert('Master Account duplicated!')">Yes, Duplicate</button>
+                            <button type="button" class="ms-btn neutral" onclick="closeAccountOption('duplicateMaster')">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ================= END ACCOUNT SETTINGS ================= -->
+
+            <!-- ================= LOGS SECTION ================= -->
+            <section id="logs" style="display:none;">
+                <h2>Logs</h2>
+                <p>Logs of registered schools/campus by school_id</p>
+                <div class="logs-dropdowns">
+                    <div class="school-logs-group">
+                        <button class="school-logs-dropdown-btn" onclick="toggleLogsDropdown('logsSchoolA')">
+                            School A (school_id: 101)
+                        </button>
+                        <div class="school-logs-dropdown-content" id="logsSchoolA">
+                            <table class="logs-table">
+                                <thead>
+                                <tr>
+                                    <th>Student/Admin Name</th><th>Time In</th><th>Time Out</th><th>Status</th><th>Date</th><th>Activity</th><th>Account Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr><td>John Doe</td><td>08:00</td><td></td><td>Present</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                <tr><td>John Doe</td><td>08:00</td><td></td><td>Present</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                <tr><td>John Doe</td><td>08:00</td><td></td><td>Present</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                <tr><td>John Doe</td><td>08:00</td><td></td><td>Present</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                <tr><td>Mike Cruz</td><td>08:10</td><td></td><td>Late</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                <tr><td>Jane Doe</td><td>08:25</td><td></td><td>Absent</td><td>08/03/2025</td><td>Logged In</td><td>Online</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="school-logs-group">
+                        <button class="school-logs-dropdown-btn" onclick="toggleLogsDropdown('logsSchoolB')">
+                            School B (school_id: 102)
+                        </button>
+                        <div class="school-logs-dropdown-content" id="logsSchoolB">
+                            <table class="logs-table">
+                                <thead>
+                                <tr>
+                                    <th>Student/Admin Name</th><th>Time In</th><th>Time Out</th><th>Status</th><th>Date</th><th>Activity</th><th>Account Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr><td>Teacher</td><td>08:10</td><td></td><td>null</td><td>08/03/2025</td><td>Logged In: Admin Account Updated</td><td>Online</td></tr>
+                                <tr><td>Albert Lee</td><td>08:17</td><td></td><td>Late</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                <tr><td>Sam Cruz</td><td>08:30</td><td></td><td>Present</td><td>08/03/2025</td><td>QR Attendance</td><td>Offline</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ================= END LOGS ================= -->
+
+        </main>
+        <!-- ================= END MAIN CONTENT ================= -->
+    </div>
+
+    <!-- ================= SCRIPTS ================= -->
+    <script>
+    /* ============================================================
+       DASHBOARD SCRIPT (All functions namespaced onto window.MS)
+       ============================================================ */
+
+    (function(){
+        "use strict";
+
+        // Namespace
+        const NS = (window.MS = window.MS || {});
+        
+
+        /* ---------- Element Cache ---------- */
+        const el = id => document.getElementById(id);
+        const sidebarToggle = el('sidebarToggle');
+        const sidebar       = el('sidebar');
+        const sidebarMenu   = document.querySelector('.sidebar-menu');
+        const breadcrumbEl  = el('breadcrumb');
+        const mainContent   = el('mainContent');
+
+        const editProfileModal = el('editProfileModal');
+        const editProfileBtn = el('editProfileBtn');
+        const closeModalBtn = el('closeModalBtn');
+        const cancelEditProfile = el('cancelEditProfile');
+        const editProfileForm = el('editProfileForm');
+        const profileNameSidebar = el('profileNameSidebar');
+        const profilePicSidebar = el('profilePicSidebar');
+        const logoutBtn = el('logoutBtn');
+
+        const updateModal = el('updateModal');
+               const closeUpdateModalBtn = el('closeUpdateModalBtn');
+        const updateAccountForm = el('updateAccountForm');
+        const approvalModal = el('approvalModal');
+        const approvalForm = el('approvalForm');
+        const addAccountModal = el('addAccountModal');
+        const addAccountForm = el('addAccountForm');
+        const retrieveAccountModal = el('retrieveAccountModal');
+        const retrieveAccountForm = el('retrieveAccountForm');
+
+        /* ---------- Navigation Logic ---------- */
+        const sections = ['dashboard','schools','notification','generate','modification','retrieval','account','logs'];
+        let scannerPrepared = false;
+        document.querySelectorAll('.sidebar-menu a').forEach(link=>{
+            link.addEventListener('click', e=>{
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-menu a').forEach(l=>l.classList.remove('active'));
+                link.classList.add('active');
+                const target = link.getAttribute('data-content');
+                sections.forEach(sec=>{
+                    const node = el(sec);
+                    if(node) node.style.display = (sec === target) ? 'block' : 'none';
+                });
+                breadcrumbEl.textContent = link.textContent;
+                if(target === 'generate' && !scannerPrepared){
+                    NS.prepareScanner();
+                    scannerPrepared = true;
+                }
+                if(window.matchMedia('(max-width:900px)').matches){
+                    document.body.classList.remove('sidebar-open');
+                    syncAria();
+                }
+                mainContent.focus({preventScroll:true});
+            });
+        });
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            sidebarMenu.classList.toggle('hidden'); // add/remove a class that hides it
+            });
+
+        /* Unified toggle:
+           - Mobile (<=900px) toggles body.sidebar-open (push off-canvas)
+           - Desktop (>900px) toggles body.sidebar-mini (fully hidden except toggle)
+        */
+        const mqMobile = window.matchMedia('(max-width:900px)');
+
+
+        function isMobile(){ return mqMobile.matches; }
+
+        function openMobile(){
+            document.body.classList.add('sidebar-open');
+            sidebar.classList.remove('collapsed'); // optional
+            syncAria();
+            }
+            function closeMobile(){
+            document.body.classList.remove('sidebar-open');
+            sidebar.classList.remove('collapsed'); // optional (keep removed to avoid legacy)
+            syncAria();
+            }
+            function toggleSidebar(){
+            if(isMobile()){
+                if(document.body.classList.contains('sidebar-open')) closeMobile();
+                else openMobile();
+            } else {
+                document.body.classList.toggle('sidebar-mini');
+                syncAria();
+            }
+            }
+            function syncAria(){
+            if(isMobile()){
+                const expanded = document.body.classList.contains('sidebar-open');
+                sidebarToggle.setAttribute('aria-expanded', expanded ? 'true':'false');
+                sidebarToggle.setAttribute('aria-label', expanded ? 'Close navigation':'Open navigation');
+            } else {
+                const hidden = document.body.classList.contains('sidebar-mini');
+                sidebarToggle.setAttribute('aria-expanded', hidden ? 'false':'true');
+                sidebarToggle.setAttribute('aria-label', hidden ? 'Show navigation':'Hide navigation');
+            }
+            }
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            mqMobile.addEventListener('change', () => {
+            if(isMobile()){
+                closeMobile();            // start closed each time you enter mobile
+                document.body.classList.remove('sidebar-mini');
+            } else {
+                document.body.classList.remove('sidebar-open');
+            }
+            syncAria();
+            });
+            closeMobile();  // initial
+            syncAria();
+
+        // Media query change normalization
+        mqMobile.addEventListener('change', e => {
+        if (e.matches) {
+            document.body.classList.remove('sidebar-mini');
+            sidebar.classList.remove('collapsed');
+            // By default start closed (only toggle visible)
+            closeMobileSidebar();
+        } else {
+            document.body.classList.remove('sidebar-open');
+            sidebar.classList.remove('collapsed');
+            syncAria();
+        }
+        });
+
+        (function initSidebarState() {
+        if (isMobile()) {
+            document.body.classList.remove('sidebar-mini');
+            sidebar.classList.remove('collapsed');
+            document.body.classList.remove('sidebar-open');
+        } else {
+            document.body.classList.remove('sidebar-open');
+            sidebar.classList.remove('collapsed');
+        }
+        syncAria();
+        })();
+
+
+        /* ---------- Modal Helpers ---------- */
+        function openModal(modal){
+            if(!modal) return;
+            modal.style.display='block';
+            trapFocus(modal);
+        }
+        function closeModal(modal){
+            if(!modal) return;
+            modal.style.display='none';
+            releaseFocusTrap();
+        }
+
+        // Simple focus trap
+        let lastFocused=null, focusTrapContainer=null;
+        function trapFocus(container){
+            lastFocused=document.activeElement;
+            focusTrapContainer=container;
+            const f = [...container.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')]
+                .filter(n=>!n.disabled && n.offsetParent!==null);
+            if(f.length) f[0].focus();
+            document.addEventListener('keydown',handleTrap);
+        }
+        function releaseFocusTrap(){
+            document.removeEventListener('keydown',handleTrap);
+            if(lastFocused) lastFocused.focus();
+            focusTrapContainer=null;
+        }
+        function handleTrap(e){
+            if(e.key==='Escape' && focusTrapContainer){
+                closeModal(focusTrapContainer);
+            } else if(e.key==='Tab' && focusTrapContainer){
+                const f=[...focusTrapContainer.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')]
+                    .filter(n=>!n.disabled && n.offsetParent!==null);
+                if(!f.length) return;
+                const first=f[0], last=f[f.length-1];
+                if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+                else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+            }
+        }
+
+        /* ---------- Profile Modal ---------- */
+        editProfileBtn.addEventListener('click', ()=>{
+            el('editName').value = profileNameSidebar.textContent;
+            openModal(editProfileModal);
+        });
+        closeModalBtn.addEventListener('click', ()=>closeModal(editProfileModal));
+        cancelEditProfile.addEventListener('click', ()=>closeModal(editProfileModal));
+        editProfileForm.addEventListener('submit', e=>{
+            e.preventDefault();
+            const newName=el('editName').value.trim();
+            if(newName) profileNameSidebar.textContent=newName;
+            const picInput=el('editProfilePic');
+            if(picInput.files && picInput.files[0]){
+                const reader=new FileReader();
+                reader.onload = ev => { profilePicSidebar.src = ev.target.result; };
+                reader.readAsDataURL(picInput.files[0]);
+            }
+            closeModal(editProfileModal);
+        });
+        logoutBtn.addEventListener('click', ()=>{ alert('Logged out!'); location.reload(); });
+        window.addEventListener('click', e=>{
+            [editProfileModal,updateModal,approvalModal,addAccountModal,retrieveAccountModal].forEach(m=>{
+                if(e.target===m) closeModal(m);
+            });
+        });
+
+        /* ---------- Modification ---------- */
+        NS.openUpdateModal = function(name, role, email, level, password, schoolId){
+            el('updateName').value=name;
+            el('updateRole').value=role;
+            el('updateEmail').value=email;
+            el('updateLevel').value=level;
+            el('updatePassword').value=password;
+            el('updateSchoolID').value=schoolId;
+            openModal(updateModal);
+        };
+        window.openUpdateModal = NS.openUpdateModal;
+        closeUpdateModalBtn.addEventListener('click', ()=>closeModal(updateModal));
+        updateAccountForm.addEventListener('submit', e=>{ e.preventDefault(); alert('Account updated!'); closeModal(updateModal); });
+
+        window.toggleDropdown = id => {
+            const n=el(id);
+            if(n) n.style.display = n.style.display==='block' ? 'none':'block';
+        };
+        window.filterModificationAccounts = () =>{
+            const q=el('modificationSearchInput').value.toLowerCase().trim();
+            document.querySelectorAll('.account-card').forEach(c=>{
+                c.style.display = c.textContent.toLowerCase().includes(q)?'':'none';
+            });
+        };
+
+        /* ---------- Account Settings ---------- */
+        window.showAccountOption = opt=>{
+            ['changePassword','renameAccount','backupDatabase','duplicateMaster'].forEach(o=>{
+                const p=el(o+'Option');
+                if(p) p.style.display = (o===opt)?'block':'none';
+            });
+        };
+        window.closeAccountOption = opt=>{
+            const p=el(opt+'Option'); if(p) p.style.display='none';
+        };
+        el('changePasswordForm').addEventListener('submit', e=>{e.preventDefault(); alert('Password changed!'); closeAccountOption('changePassword');});
+        el('renameAccountForm').addEventListener('submit', e=>{e.preventDefault(); alert('Account name renamed!'); closeAccountOption('renameAccount');});
+
+        /* Logs */
+        window.toggleLogsDropdown = id=>{
+            const n=el(id); if(n) n.style.display = n.style.display==='block'?'none':'block';
+        };
+
+        /* Approval modal */
+        window.openApprovalModal = e=>{
+            if(e) e.stopPropagation();
+            approvalForm.reset();
+            el('schoolIDError').style.display='none';
+            el('approvalSchoolYear').value='2026';
+            openModal(approvalModal);
+        };
+        window.closeApprovalModal = ()=>closeModal(approvalModal);
+        approvalForm.addEventListener('submit', e=>{
+            e.preventDefault();
+            const schoolIDEl=el('approvalSchoolID');
+            const errorEl=el('schoolIDError');
+            if(!schoolIDEl.value.trim()){
+                errorEl.style.display='block';
+                schoolIDEl.focus();
+                return;
+            }
+            errorEl.style.display='none';
+            alert('School Registration Approved!');
+            closeModal(approvalModal);
+            const card=el('notif-approval-1');
+            if(card){
+                card.classList.remove('notification-unread');
+                card.classList.add('notification-read');
+                const dot=card.querySelector('.notif-status-dot');
+                if(dot) dot.setAttribute('aria-label','Read');
+            }
+        });
+
+        /* Retrieval */
+        window.toggleRetrievalTable = id=>{
+            const n=el(id); if(n) n.style.display = n.style.display==='block'?'none':'block';
+        };
+        window.showAddAccountModal = ()=>{
+            addAccountForm.reset();
+            openModal(addAccountModal);
+        };
+        window.closeAddAccountModal = ()=>closeModal(addAccountModal);
+        addAccountForm.addEventListener('submit', e=>{
+            e.preventDefault(); alert('Account added!'); closeModal(addAccountModal);
+        });
+        window.showRetrieveAccountModal = row=>{
+            const cells=row.querySelectorAll('td');
+            el('retrieveName').value=cells[0].innerText;
+            el('retrieveProfession').value=cells[1].innerText;
+            el('retrieveEmail').value=cells[2].innerText;
+            el('retrieveLevel').value=cells[3].innerText; // hidden; script in retrieval section will map
+            el('retrieveSchoolName').value=row.dataset.school;
+            el('retrieveSchoolID').value=row.dataset.schoolid;
+            el('retrievePassword').value='';
+            openModal(retrieveAccountModal);
+        };
+        window.closeRetrieveAccountModal = ()=>closeModal(retrieveAccountModal);
+        retrieveAccountForm.addEventListener('submit', e=>{
+            e.preventDefault(); alert('Account retrieved!'); closeModal(retrieveAccountModal);
+        });
+        window.filterRetrievalTable = ()=>{
+            const q=el('retrievalSearch').value.toLowerCase();
+            document.querySelectorAll('.retrieval-table-group tbody tr').forEach(r=>{
+                r.style.display = r.innerText.toLowerCase().includes(q)?'':'none';
+            });
+        };
+
+        /* ---------- QR Logic ---------- */
+        const generatedCodes = new Set();
+        let html5qrcodeInstance = null;
+        let scannerRunning = false;
+
+        function sanitize(raw){
+            return (raw||'').toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,64);
+        }
+        function getEcc(letter){
+            const map={L:QRCode.CorrectLevel.L,M:QRCode.CorrectLevel.M,Q:QRCode.CorrectLevel.Q,H:QRCode.CorrectLevel.H};
+            return map[letter]||QRCode.CorrectLevel.H;
+        }
+
+        NS.generateRandomCode = function(len=8){
+            const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let out=''; for(let i=0;i<len;i++) out+=chars[Math.floor(Math.random()*chars.length)];
+            el('qrInputCode').value=out;
+            return out;
+        };
+        window.MS_generateRandomCode = NS.generateRandomCode;
+
+        NS.generateQRCode = function(){
+            const inputEl = el('qrInputCode');
+            let code = sanitize(inputEl.value);
+            if(!code) code = NS.generateRandomCode(parseInt(el('qrRandomLen').value,10)||8);
+            const size = parseInt(el('qrSizeSelect').value,10);
+            const ecc = getEcc(el('qrEccSelect').value);
+            const pad = el('qrAddPadding').checked ? 20 : 0;
+            const temp = document.createElement('div');
+            if(!window.QRCode){ alert('QRCode library not loaded.'); return; }
+            new QRCode(temp,{text:code,width:size,height:size,correctLevel:ecc});
+            setTimeout(()=>{
+                const img = temp.querySelector('img')||temp.querySelector('canvas');
+                if(!img){ alert('QR generation failed'); return; }
+                const canvas = el('qrRenderedCanvas');
+                canvas.width = size+pad*2;
+                canvas.height = size+pad*2;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle='#fff';
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                if(img.tagName.toLowerCase()==='img'){
+                    if(!img.complete){ img.onload=()=>ctx.drawImage(img,pad,pad,size,size); }
+                    else ctx.drawImage(img,pad,pad,size,size);
+                }else ctx.drawImage(img,pad,pad);
+                el('qrOriginalCode').textContent = inputEl.value || '(blank->random)';
+                el('qrCurrentCode').textContent = code;
+                el('downloadQRBtn').disabled=false;
+                el('copyCodeBtn').disabled=false;
+                if(!generatedCodes.has(code)){
+                    generatedCodes.add(code);
+                    renderGeneratedCodes();
+                }
+                localDecode();
+            },30);
+        };
+        window.MS_generateQRCode = NS.generateQRCode;
+
+        function renderGeneratedCodes(){
+            const ul = el('qrGeneratedCodesUl');
+            ul.innerHTML='';
+            [...generatedCodes].slice(-50).reverse().forEach(c=>{
+                const li=document.createElement('li');
+                li.textContent=c;
+                ul.appendChild(li);
+            });
+        }
+
+        NS.clearQRCode = function(){
+            const canvas = el('qrRenderedCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            el('qrOriginalCode').textContent='';
+            el('qrCurrentCode').textContent='';
+            el('qrLocalDecodeStatus').textContent='Idle';
+            el('qrLocalDecodeStatus').className='badge badge-idle';
+            el('downloadQRBtn').disabled=true;
+            el('copyCodeBtn').disabled=true;
+        };
+        window.MS_clearQRCode = NS.clearQRCode;
+
+        NS.downloadQRCode = function(){
+            const canvas = el('qrRenderedCanvas');
+            if(!canvas.width){ alert('No QR code.'); return; }
+            const a=document.createElement('a');
+            a.href=canvas.toDataURL('image/png');
+            a.download=(el('qrCurrentCode').textContent||'qr_code')+'.png';
+            a.click();
+        };
+        window.MS_downloadQRCode = NS.downloadQRCode;
+
+        NS.downloadUpscaled = function(){
+            const src = el('qrRenderedCanvas');
+            if(!src.width){ alert('No QR to upscale'); return; }
+            const scale=4;
+            const big=document.createElement('canvas');
+            big.width=src.width*scale; big.height=src.height*scale;
+            const ctx=big.getContext('2d');
+            ctx.imageSmoothingEnabled=false;
+            ctx.drawImage(src,0,0,big.width,big.height);
+            const a=document.createElement('a');
+            a.href=big.toDataURL('image/png');
+            a.download=(el('qrCurrentCode').textContent||'qr_code')+'_x4.png';
+            a.click();
+        };
+        window.MS_downloadUpscaled = NS.downloadUpscaled;
+
+        NS.copyCode = function(){
+            const code = el('qrCurrentCode').textContent;
+            if(!code) return;
+            navigator.clipboard.writeText(code).then(()=>{
+                const btn = el('copyCodeBtn');
+                const old = btn.textContent;
+                btn.textContent='Copied!';
+                setTimeout(()=>btn.textContent=old,1200);
+            });
+        };
+        window.MS_copyCode = NS.copyCode;
+
+        function localDecode(){
+            const canvas = el('qrRenderedCanvas');
+            if(!canvas.width) return;
+            const ctx=canvas.getContext('2d');
+            const data=ctx.getImageData(0,0,canvas.width,canvas.height);
+            if(!window.jsQR){ el('qrLocalDecodeStatus').textContent='Library Missing'; return; }
+            const res=jsQR(data.data,canvas.width,canvas.height,{inversionAttempts:'attemptBoth'});
+            const status=el('qrLocalDecodeStatus');
+            if(res && res.data){
+                const san = sanitize(res.data);
+                status.textContent='PASS ('+san+')';
+                status.className='badge badge-success';
+            }else{
+                status.textContent='FAIL';
+                status.className='badge badge-error';
+            }
+        }
+
+        NS.manualDecodeCurrent = localDecode;
+        window.MS_manualDecodeCurrent = localDecode;
+
+        NS.selfTestLoop = async function(count=10){
+            const btns = document.querySelectorAll('#qrGenerateForm button,.qr-actions button');
+            btns.forEach(b=>b.disabled=true);
+            for(let i=0;i<count;i++){
+                el('qrInputCode').value='';
+                NS.generateQRCode();
+                await new Promise(r=>setTimeout(r,150));
+            }
+            btns.forEach(b=>b.disabled=false);
+            if(el('qrCurrentCode').textContent) el('copyCodeBtn').disabled=false;
+        };
+        window.MS_selfTestLoop = NS.selfTestLoop;
+
+        NS.prepareScanner = function(){
+            const startBtn = el('startScannerBtn');
+            if(window.Html5Qrcode) startBtn.disabled=false;
+        };
+
+        NS.startScanner = function(){
+            if(scannerRunning) return;
+            if(!window.Html5Qrcode){ alert('Scanner library missing.'); return; }
+            html5qrcodeInstance = new Html5Qrcode('qrReader',{verbose:false});
+            const config={fps:12,qrbox:{width:250,height:250},aspectRatio:1.0};
+            html5qrcodeInstance.start({facingMode:'environment'},config,
+                decoded => NS.onScanSuccess(decoded),
+                () => {}
+            ).then(()=>{
+                scannerRunning=true;
+                el('startScannerBtn').disabled=true;
+                el('stopScannerBtn').disabled=false;
+                setScanStatus('Scanning...','active');
+            }).catch(err=>{
+                setScanStatus('Start failed','error');
+                console.error(err);
+            });
+        };
+        window.MS_startScanner = NS.startScanner;
+
+        NS.stopScanner = function(){
+            if(!scannerRunning || !html5qrcodeInstance) return;
+            html5qrcodeInstance.stop().then(()=>{
+                scannerRunning=false;
+                el('startScannerBtn').disabled=false;
+                el('stopScannerBtn').disabled=true;
+                setScanStatus('Stopped','idle');
+            }).catch(err=>{
+                setScanStatus('Stop error','error');
+                console.error(err);
+            });
+        };
+        window.MS_stopScanner = NS.stopScanner;
+
+        NS.onScanSuccess = function(raw){
+            el('scanResultRaw').textContent = raw;
+            const clean = sanitize(raw);
+            setScanStatus(clean,'success');
+            updateRegistrationStatus(clean);
+        };
+
+        function setScanStatus(text,state='idle'){
+            const elStatus = el('scanResultText');
+            elStatus.textContent = text;
+            elStatus.className = 'badge badge-'+state;
+        }
+        function updateRegistrationStatus(code){
+            const exists = generatedCodes.has(code);
+            const reg = el('scanRegStatus');
+            reg.textContent = exists ? 'REGISTERED (Session)' : 'UNREGISTERED';
+            reg.className = 'badge '+(exists?'badge-registered':'badge-unregistered');
+        }
+
+        NS.decodeFromImage = function(evt){
+            const file = evt.target.files[0];
+            if(!file) return;
+            const status = el('imageDecodeStatus');
+            status.textContent='Decoding...';
+            const reader = new FileReader();
+            reader.onload = e=>{
+                const img = new Image();
+                img.onload = ()=>{
+                    const canvas = el('qrHiddenCanvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width=img.width;
+                    canvas.height=img.height;
+                    ctx.drawImage(img,0,0);
+                    const data = ctx.getImageData(0,0,canvas.width,canvas.height);
+                    const code = jsQR(data.data,canvas.width,canvas.height,{inversionAttempts:'attemptBoth'});
+                    if(code){
+                        NS.onScanSuccess(code.data);
+                        status.textContent='Decoded: '+code.data;
+                    }else{
+                        status.textContent='No QR found.';
+                    }
+                };
+                img.onerror = ()=> status.textContent='Invalid image.';
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+        window.MS_decodeFromImage = NS.decodeFromImage;
+
+        NS.manualCheck = function(){
+            const code = sanitize(el('manualCheckInput').value);
+            const status = el('manualCheckStatus');
+            if(!code){status.textContent='Enter a code first.';return;}
+            status.textContent = generatedCodes.has(code)?'Code is REGISTERED (session).':'Code not found.';
+        };
+        window.MS_manualCheck = NS.manualCheck;
+
+        window.addEventListener('beforeunload', ()=>{
+            if(scannerRunning) try{ html5qrcodeInstance.stop(); }catch(_){}
+        });
+
+        setTimeout(()=>{
+            if(el('generate').style.display!=='none' && !scannerPrepared){
+                NS.prepareScanner();
+                scannerPrepared = true;
+            }
+        },800);
+
+    })();
+    function showAccountOption(option){
+        ['changePassword','renameAccount','backupDatabase','duplicateMaster'].forEach(o=>{
+            const panel = document.getElementById(o+'Option');
+            if(!panel) return;
+            if(o===option){
+            panel.classList.add('open');
+            } else {
+            panel.classList.remove('open');
+            }
+        });
+        }
+        function closeAccountOption(option){
+        const panel = document.getElementById(option+'Option');
+        if(panel) panel.classList.remove('open');
+        }
+        function toggleNotificationDetail(notifId) {
+            const card = document.getElementById(notifId);
+            if (!card) return;
+            const detail = document.getElementById(notifId + '-detail');
+            if (!detail) return;
+
+            const open = card.classList.contains('show-detail');
+
+            document.querySelectorAll('.notification-card.show-detail').forEach(c=>{
+                if(c!==card) c.classList.remove('show-detail');
+            });
+
+            if(open){
+                card.classList.remove('show-detail');
+                card.setAttribute('aria-expanded','false');
+            } else {
+                card.classList.add('show-detail');
+                card.setAttribute('aria-expanded','true');
+                if(card.classList.contains('notification-unread')){
+                    card.classList.remove('notification-unread');
+                    card.classList.add('notification-read');
+                    const dot=card.querySelector('.notif-status-dot');
+                    if(dot) dot.setAttribute('aria-label','Read');
+                }
+            }
+        }
+    </script>
+    <!-- ================= END SCRIPTS ================= -->
+</body>
+</html>

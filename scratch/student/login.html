@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Student Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-body">
+  <a class="visually-hidden" href="#loginForm">Skip to login form</a>
+
+  <main class="auth-main" role="main">
+    <header class="auth-header">
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-sub">Sign in to manage attendance and merits.</p>
+    </header>
+
+    <div class="form-card auth-card" id="loginCard">
+      <h2 class="panel-title" style="margin-top:0;">Student Login</h2>
+      <form id="loginForm" class="auth-form" novalidate>
+        <div class="form-row">
+          <label for="schoolId" class="form-label">School ID</label>
+          <input id="schoolId" type="text" class="input-control" value="102842" readonly aria-readonly="true">
+        </div>
+
+        <div class="form-row">
+          <label for="email" class="form-label">Email</label>
+          <input id="email" name="email" type="email" class="input-control" required autocomplete="username" placeholder="you@school.edu">
+        </div>
+
+        <div class="form-row">
+          <label for="password" class="form-label">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="input-control"
+            required
+            autocomplete="current-password"
+            pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$#]).{8,}$"
+            title="At least 8 characters, one uppercase letter, one number, and one special character (!@#$#)">
+          <div class="field-hint">Min 8 chars, 1 uppercase, 1 number, 1 special (!@#$#)</div>
+        </div>
+
+        <div class="form-actions" style="margin-top:10px;">
+          <button type="submit" class="btn btn-primary w-100" id="loginBtn">Sign In</button>
+        </div>
+
+        <p class="small" style="margin:16px 0 0;text-align:center;">
+          <a href="#" id="forgotLink">Forgot password?</a>
+        </p>
+      </form>
+    </div>
+
+    <footer class="auth-footer">
+      <p class="small">© <span id="yearNow"></span> Merit Scan. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <!-- Floating theme toggle (bottom-right) -->
+  <button id="themeToggle" class="btn btn-ghost btn-sm theme-toggle-floating" aria-pressed="false" aria-label="Toggle dark mode">
+    Dark Mode
+  </button>
+
+  <div id="ariaLive" class="visually-hidden" aria-live="polite"></div>
+
+  <script>
+    /* Theme toggle (same logic, now for floating button) */
+    (function(){
+      const KEY="ms-theme";
+      const btn=document.getElementById("themeToggle");
+      const saved=(()=>{try{return localStorage.getItem(KEY);}catch(_){return null;}})();
+      const prefersDark=matchMedia("(prefers-color-scheme:dark)").matches;
+      apply(saved || (prefersDark ? "dark":"light"));
+      btn?.addEventListener("click", ()=>{
+        const current=document.documentElement.getAttribute("data-theme");
+        const next=current==="dark"?"light":"dark";
+        apply(next);
+        try{localStorage.setItem(KEY,next);}catch(_){}
+        announce("Theme switched to "+next);
+      });
+      function apply(t){
+        document.documentElement.setAttribute("data-theme", t);
+        if(btn){
+          btn.textContent = t==="dark" ? "Light Mode" : "Dark Mode";
+          btn.setAttribute("aria-pressed", t==="dark");
+        }
+      }
+    })();
+
+    function announce(msg){
+      const r=document.getElementById("ariaLive");
+      if(!r) return;
+      r.textContent="";
+      setTimeout(()=>r.textContent=msg,10);
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const email=document.getElementById("email").value.trim();
+      const pw=document.getElementById("password").value;
+      if(!email){
+        announce("Email required");
+        document.getElementById("email").focus();
+        return;
+      }
+      if(!pw){
+        announce("Password required");
+        document.getElementById("password").focus();
+        return;
+      }
+      const pattern=new RegExp(document.getElementById("password").getAttribute("pattern"));
+      if(!pattern.test(pw)){
+        announce("Password does not meet complexity");
+        document.getElementById("password").focus();
+        return;
+      }
+      announce("Signing in...");
+      setTimeout(()=>{ window.location.href="dashboard.html"; }, 600);
+    });
+
+    document.getElementById("yearNow").textContent=new Date().getFullYear();
+  </script>
+</body>
+</html>

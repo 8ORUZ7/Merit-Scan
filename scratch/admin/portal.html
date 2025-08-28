@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portal</title>
+  <link rel="stylesheet" href="portal.css"/>
+  <!-- Primary scanner library -->
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+  <!-- Fallback decoding library -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" defer></script>
+</head>
+<body>
+  <header class="topbar" aria-label="Portal header">
+    <div class="container topbar-inner">
+      <h1 class="portal-brand" aria-label="Merit Scan Portal">Merit Scan Portal</h1>
+      <div class="status-badge" id="portalStatusBadge" aria-live="polite">Initializing…</div>
+    </div>
+  </header>
+
+  <main class="main-stage" id="mainStage" tabindex="-1">
+    <section class="scan-card" aria-labelledby="scanTitle">
+      <h2 id="scanTitle" class="scan-title">Scan Your QR Code</h2>
+      <p class="scan-sub">Hold your code steady inside the green frame.</p>
+
+      <div class="camera-shell" id="cameraShell" aria-live="polite">
+        <div class="camera-container" id="cameraContainer" aria-label="Camera preview">
+          <!-- html5-qrcode target -->
+            <div id="qrReader" class="qr-reader"></div>
+            <!-- Fallback video (hidden unless fallback active) -->
+            <video id="fbVideo" playsinline autoplay muted style="display:none;width:100%;height:100%;object-fit:cover;border-radius:32px;"></video>
+            <!-- Guide overlay -->
+            <div class="qr-guide">
+              <span class="scan-line"></span>
+            </div>
+        </div>
+        <div id="cameraMessage" class="camera-message">Loading scanner…</div>
+        <!-- Fallback canvas (hidden) -->
+        <canvas id="fbCanvas" width="0" height="0" style="display:none;"></canvas>
+      </div>
+
+      <div class="scan-info">
+        <span id="lastScanRaw" class="last-scan">(No scan yet)</span>
+      </div>
+
+      <div id="scanStatusBanner" class="scan-status-banner" aria-live="assertive" hidden></div>
+
+      <div class="actions">
+        <button id="restartBtn" class="btn btn-ghost small" disabled>Restart Scanner</button>
+        <button id="switchCamBtn" class="btn btn-ghost small" disabled>Switch Camera</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="ft-text">© 2025 Merit Scan. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+      (function(){
+        /* =========================
+          Configuration & State
+          ========================= */
+        const TARGET_CODE = '8JKH3B4O';
+        const studentMap = { '8JKH3B4O':'John Doe' }; // change name as required
+
+        const sanitize = r => (r||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,64);
+
+        const statusBadge   = document.getElementById('portalStatusBadge');
+        const cameraMessage = document.getElementById('cameraMessage');
+        const lastScanRaw   = document.getElementById('lastScanRaw');
+        const restartBtn    = document.getElementById('restartBtn');
+        const switchCamBtn  = document.getElementById('switchCamBtn');
+        const banner        = document.getElementById('scanStatusBanner');
+
+        // Elements for fallback
+        const fbVideo  = document.getElementById('fbVideo');
+        const fbCanvas = document.getElementById('fbCanvas');
+        const fbCtx    = fbCanvas.getContext('2d');
+
+        // Primary (html5-qrcode) instance
+        let h5Instance = null;
+
+        // Mode: 'h5' (html5-qrcode) | 'fallback' (jsQR)
+        let mode = 'h5';
+
+        // Generic state
+        let currentCameraId = null;
+        let cameraIds = [];
+        let starting = false;
+        let acceptScans = true;
+        let camerasEnumerated = false;
+        let fallbackStream = null;
+        let fallbackRAF = null;
+        const LS_KEY = 'ms-portal-camera-id';
+        const H5_FAIL_TIMEOUT_MS = 5500; // if h5-qrcode does not start within this, fallback
+
+        /* =========================
+          UI Helpers
+          ========================= */
+        function setStatus(text, state){
+          statusBadge.textContent = text;
+          statusBadge.className = 'status-badge status-'+state + (mode==='fallback' ? ' status-fallback' : '');
+        }
+        function showBanner(html){
+          banner.hidden = false;
+          banner.innerHTML = html;
+        }
+        function hideBanner(){
+          banner.hidden = true;
+          banner.innerHTML = '';
+        }
+        function updateBanner(secs,name,code){
+          const timeText = secs>0 ? `Refreshing in ${secs}…` : 'Resetting…';
+          showBanner(`<strong>Welcome ${name}! <br> Please Come In!</strong><br>
+            <span class="refresh-timer">${timeText}</span>`);
+        }
+
+        /* =========================
+          Success & Reset
+          ========================= */
+        function handleSuccess(code){
+          if(!acceptScans) return;
+          acceptScans = false;
+          setStatus('Accepted','success');
+          const name = studentMap[code] || 'Student';
+          let secs = 5;
+          updateBanner(secs,name,code);
+          const timer = setInterval(()=>{
+            secs--;
+            updateBanner(secs,name,code);
+            if(secs<=0){
+              clearInterval(timer);
+              softReset();
+            }
+          },1000);
+        }
+
+        function softReset(){
+          hideBanner();
+          lastScanRaw.textContent = '(Awaiting next scan)';
+          setStatus('Scanning', mode==='fallback' ? 'on' : 'on');
+          acceptScans = true;
+        }
+
+        /* =========================
+          Shared scan handlers
+          ========================= */
+        function onScanDecoded(raw){
+          if(!acceptScans) return;
+          const clean = sanitize(raw);
+          lastScanRaw.textContent = 'Scan: ' + clean;
+          if(clean === TARGET_CODE) handleSuccess(clean);
+        }
+
+        /* =========================
+          Primary: html5-qrcode
+          ========================= */
+        function startH5(cameraId){
+          if(starting) return;
+          mode = 'h5';
+          starting = true;
+          restartBtn.disabled = true;
+          switchCamBtn.disabled = true;
+          hideBanner();
+          cameraMessage.textContent = 'Starting camera…';
+          setStatus('Starting','starting');
+
+          if(!h5Instance){
+            if(!window.Html5Qrcode){
+              // If library missing, immediate fallback
+              console.warn('html5-qrcode library missing, falling back to jsQR.');
+              return startFallback(cameraId);
+            }
+            h5Instance = new Html5Qrcode('qrReader',{ verbose:false });
+          }
+          // Ensure fallback video hidden
+          fbVideo.style.display = 'none';
+
+          const constraints = cameraId ? { deviceId:{ exact:cameraId } } : { facingMode:'environment' };
+          const config = {
+            fps:12,
+            qrbox:{ width:250, height:250 },
+            aspectRatio:1.0,
+            disableFlip:false,
+            rememberLastUsedCamera:true,
+            experimentalFeatures:{ useBarCodeDetectorIfSupported:true }
+          };
+
+          let started = false;
+          const failTimer = setTimeout(()=>{
+            if(!started){
+              console.warn('html5-qrcode start timeout; switching to fallback.');
+              safeStopH5(true);
+              startFallback(cameraId);
+            }
+          }, H5_FAIL_TIMEOUT_MS);
+
+          h5Instance.start(
+            constraints,
+            config,
+            decoded => onScanDecoded(decoded),
+            () => {} // frame fail ignore
+          ).then(()=>{
+            clearTimeout(failTimer);
+            started = true;
+            starting = false;
+            const state = h5Instance.getState();
+            currentCameraId = state.cameraId || cameraId;
+            if(currentCameraId){
+              try { localStorage.setItem(LS_KEY,currentCameraId); } catch(_){}
+            }
+            cameraMessage.textContent = '';
+            setStatus('Scanning','on');
+            restartBtn.disabled = false;
+            enumerateCamerasOnce(); // after permission
+          }).catch(err=>{
+            clearTimeout(failTimer);
+            starting = false;
+            console.warn('html5-qrcode failed, falling back.', err);
+            cameraMessage.textContent = 'Switching to fallback…';
+            safeStopH5(true);
+            startFallback(cameraId);
+          });
+        }
+
+        function safeStopH5(silent){
+          if(h5Instance){
+            try {
+              h5Instance.stop().catch(()=>{});
+            } catch(e){}
+          }
+          if(!silent) setStatus('Stopped','off');
+        }
+
+        /* =========================
+          Fallback: jsQR + getUserMedia
+          ========================= */
+        function startFallback(cameraId){
+          if(starting) return;
+          mode = 'fallback';
+          starting = true;
+          restartBtn.disabled = true;
+          switchCamBtn.disabled = true;
+          hideBanner();
+          setStatus('Starting (fallback)','starting');
+          cameraMessage.textContent = 'Starting fallback scanner…';
+
+          // Hide html5-qrcode container’s internal video region content if any
+          // just leave the container; show our own video element.
+          fbVideo.style.display = 'block';
+          // Ensure html5-qrcode does not overlay leftover elements.
+          const h5Region = document.querySelector('#qrReader__scan_region');
+          if(h5Region) h5Region.style.display='none';
+
+          const constraints = cameraId ? { video:{ deviceId:{ exact:cameraId } } }
+                                      : { video:{ facingMode:'environment' } };
+
+          navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream=>{
+              fallbackStream = stream;
+              fbVideo.srcObject = stream;
+              fbVideo.onloadedmetadata = ()=>{
+                fbVideo.play().then(()=>{
+                  starting = false;
+                  currentCameraId = getStreamDeviceId(stream) || cameraId;
+                  if(currentCameraId){
+                    try { localStorage.setItem(LS_KEY,currentCameraId); } catch(_){}
+                  }
+                  cameraMessage.textContent = '';
+                  setStatus('Scanning (fallback)','on');
+                  restartBtn.disabled = false;
+                  enumerateCamerasOnceFallback(stream).then(()=> {
+                    switchCamBtn.disabled = cameraIds.length < 2;
+                  });
+                  acceptScans = true;
+                  fallbackLoop();
+                });
+              };
+            })
+            .catch(err=>{
+              starting = false;
+              cameraMessage.textContent = 'Fallback failed: '+(err?.message||err);
+              setStatus('Denied','error');
+              restartBtn.disabled = false;
+            });
+        }
+
+        function fallbackLoop(){
+          if(!fallbackStream || !acceptScans){
+            fallbackRAF = requestAnimationFrame(fallbackLoop);
+            return;
+          }
+          if(fbVideo.readyState === fbVideo.HAVE_ENOUGH_DATA){
+            fbCanvas.width = fbVideo.videoWidth;
+            fbCanvas.height = fbVideo.videoHeight;
+            fbCtx.drawImage(fbVideo,0,0,fbCanvas.width,fbCanvas.height);
+            if(window.jsQR){
+              const imgData = fbCtx.getImageData(0,0,fbCanvas.width,fbCanvas.height);
+              const code = jsQR(imgData.data, fbCanvas.width, fbCanvas.height, { inversionAttempts:'attemptBoth' });
+              if(code && code.data){
+                onScanDecoded(code.data);
+              }
+            }
+          }
+          fallbackRAF = requestAnimationFrame(fallbackLoop);
+        }
+
+        function stopFallback(){
+          if(fallbackRAF) cancelAnimationFrame(fallbackRAF);
+          fallbackRAF = null;
+          if(fallbackStream){
+            fallbackStream.getTracks().forEach(t=>t.stop());
+            fallbackStream = null;
+          }
+          fbVideo.srcObject = null;
+          fbVideo.style.display='none';
+        }
+
+        function getStreamDeviceId(stream){
+          const track = stream.getVideoTracks()[0];
+          return track && track.getSettings && track.getSettings().deviceId;
+        }
+
+        /* =========================
+          Camera Enumeration
+          ========================= */
+        async function enumerateCamerasOnce(){
+          if(camerasEnumerated || !window.Html5Qrcode) return;
+          try{
+            const devices = await Html5Qrcode.getCameras();
+            cameraIds = devices.map(d=>d.id);
+            camerasEnumerated = true;
+            switchCamBtn.disabled = cameraIds.length < 2;
+          }catch(e){
+            console.warn('Enumeration (h5) failed', e);
+          }
+        }
+
+        async function enumerateCamerasOnceFallback(stream){
+          if(camerasEnumerated) return;
+          try{
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            cameraIds = devices.filter(d=>d.kind==='videoinput').map(d=>d.deviceId);
+            camerasEnumerated = true;
+          }catch(e){
+            console.warn('Enumeration (fallback) failed', e);
+          }
+        }
+
+        /* =========================
+          Controls
+          ========================= */
+        restartBtn.addEventListener('click', ()=>{
+          hideBanner();
+          lastScanRaw.textContent = '(Restarting…)';
+          acceptScans = true;
+          if(mode==='h5'){
+            safeStopH5(true);
+            setTimeout(()=>startH5(currentCameraId),120);
+          } else {
+            stopFallback();
+            setTimeout(()=>startFallback(currentCameraId),120);
+          }
+        });
+
+        switchCamBtn.addEventListener('click', ()=>{
+          if(cameraIds.length < 2 || starting) return;
+          const idx = cameraIds.indexOf(currentCameraId);
+          const next = cameraIds[(idx+1) % cameraIds.length];
+          hideBanner();
+          acceptScans = true;
+          if(mode==='h5'){
+            safeStopH5(true);
+            setTimeout(()=>startH5(next), 140);
+          } else {
+            stopFallback();
+            setTimeout(()=>startFallback(next), 140);
+          }
+        });
+
+        /* =========================
+          Initialization
+          ========================= */
+        function init(){
+          let saved;
+          try { saved = localStorage.getItem(LS_KEY); } catch(_){}
+          if(window.Html5Qrcode){
+            startH5(saved || null);
+          } else {
+            startFallback(saved || null);
+          }
+        }
+
+        window.addEventListener('load', init);
+        window.addEventListener('beforeunload', ()=>{
+          try { safeStopH5(true); } catch(_){}
+          try { stopFallback(); } catch(_){}
+        });
+
+        /* =========================
+          BroadcastChannel Integration
+          ========================= */
+        const bc = new BroadcastChannel('portalStatusChannel');
+        function broadcastOnline(){ bc.postMessage('portal-online'); }
+        broadcastOnline();
+        const onlineInterval = setInterval(broadcastOnline, 2000);
+        bc.onmessage = e=>{ if(e.data==='status-request') broadcastOnline(); };
+        window.addEventListener('beforeunload', ()=>{
+          bc.postMessage('portal-offline');
+          clearInterval(onlineInterval);
+        });
+      })();
+  </script>
+</body>
+</html>

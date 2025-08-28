@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="topbar" data-elevate>
+  <div class="container topbar-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-logo-wrap">
+        <img class="brand-logo" src="https://i.imgur.com/4Z5b1aH.png" alt="Logo">
+      </div>
+      <span class="brand-name">Merit Scan</span>
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <button class="nav-toggle-btn" id="mobileNavBtn" aria-label="Menu" aria-expanded="false" aria-controls="mobileDrawer">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <ul class="topnav-list" id="mainNav">
+        <li><a class="topnav-link" href="index.html">Home</a></li>
+        <li><a class="topnav-link" href="register.html">Register</a></li>
+        <li><a class="topnav-link active" href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <nav aria-label="Mobile navigation">
+      <a class="mobile-link" href="index.html" data-close>Home</a>
+      <a class="mobile-link" href="register.html" data-close>Register</a>
+      <a class="mobile-link active" href="login.html" data-close>Login</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="auth-main">
+  <!-- Compact hero WITHOUT right-side artwork -->
+  <section class="hero hero-compact">
+    <div class="container">
+      <h1 class="hero-title reveal-up" style="margin-bottom:10px;">Welcome Back</h1>
+      <p class="hero-subtitle reveal-up delay-1" style="max-width:640px;">Sign in to manage attendance and merits.</p>
+    </div>
+  </section>
+
+  <section class="container auth-wrap">
+    <div class="card form-card elevate reveal-up">
+      <h2 class="form-title">Login</h2>
+      <form class="form" id="loginForm" novalidate>
+        <div class="field">
+          <label for="school_id">School ID (optional)</label>
+          <input class="input" id="school_id" name="school_id" type="text" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" id="email" name="email" type="email" autocomplete="email" required>
+          <p class="field-msg" data-msg-for="email"></p>
+        </div>
+
+        <div class="field password-field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input class="input" id="password" name="password" type="password"
+                   autocomplete="current-password"
+                   required
+                   pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$#]).{8,}$"
+                   aria-describedby="pwHelp">
+            <button type="button" class="pwd-toggle" aria-label="Show password" data-visible="false">👁</button>
+          </div>
+          <div id="pwHelp" class="help-text small">
+            Same rules as registration (uppercase, number, special).
+          </div>
+          <p class="field-msg" data-msg-for="password"></p>
+        </div>
+
+        <div class="field remember-row">
+          <label class="remember">
+            <input type="checkbox" id="remember" name="remember">
+            <span>Remember session</span>
+          </label>
+          <a href="#" class="small link subtle-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary full btn-lg" id="loginBtn">
+          <span class="btn-label">Sign In</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+      <p class="form-note">New to Merit Scan? <a href="register.html" class="link">Create an account</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <h3 class="footer-heading">Merit Scan</h3>
+      <p class="footer-text small">Unified Attendance & Merit Platform</p>
+    </div>
+    <div>
+      <h3 class="footer-heading">Links</h3>
+      <ul class="footer-list">
+        <li><a class="footer-link" href="register.html">Register</a></li>
+        <li><a class="footer-link" href="index.html#features">Features</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="copyright">© 2025 Merit Scan</p>
+</footer>
+
+<div id="liveRegion" class="visually-hidden" aria-live="polite"></div>
+
+<script>
+/* Mobile Drawer */
+(function(){
+  const btn=document.getElementById('mobileNavBtn');
+  const drawer=document.getElementById('mobileDrawer');
+  if(!btn||!drawer)return;
+  function open(){drawer.hidden=false;btn.setAttribute('aria-expanded','true');document.body.classList.add('no-scroll');}
+  function close(){drawer.hidden=true;btn.setAttribute('aria-expanded','false');document.body.classList.remove('no-scroll');}
+  btn.addEventListener('click',()=>drawer.hidden?open():close());
+  drawer.addEventListener('click',e=>{ if(e.target.matches('[data-close]')||e.target.closest('a.mobile-link')) close(); });
+  addEventListener('resize',()=>{ if(innerWidth>900) close(); });
+  if(innerWidth>900) close();
+})();
+
+/* Reveal */
+(function(){
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}
+  }),{threshold:.2});
+  document.querySelectorAll('.reveal-up').forEach(el=>obs.observe(el));
+})();
+
+/* Login Form */
+(function(){
+  const form=document.getElementById('loginForm');
+  if(!form) return;
+  const pwd=form.querySelector('#password');
+  const toggle=form.querySelector('.pwd-toggle');
+  toggle.addEventListener('click',()=>{
+    const vis=toggle.getAttribute('data-visible')==='true';
+    pwd.type=vis?'password':'text';
+    toggle.setAttribute('data-visible',!vis);
+    toggle.textContent=vis?'👁':'🙈';
+  });
+  function setError(id,msg){
+    const input=form.querySelector('#'+id);
+    const p=form.querySelector('[data-msg-for="'+id+'"]');
+    if(p){ p.textContent=msg||''; }
+    input.classList.toggle('is-invalid', !!msg);
+  }
+  form.addEventListener('submit',e=>{
+    let bad=false;
+    ['email','password'].forEach(id=>{
+      const input=form.querySelector('#'+id);
+      if(!input.checkValidity()){ setError(id,input.validationMessage); bad=true; }
+      else setError(id,'');
+    });
+    if(bad){ e.preventDefault(); return; }
+    e.preventDefault();
+    const btn=document.getElementById('loginBtn');
+    btn.classList.add('loading'); btn.disabled=true;
+    setTimeout(()=>{
+      btn.classList.remove('loading'); btn.disabled=false;
+      alert('Logged in (demo)!');
+      form.reset();
+    },1100);
+  });
+})();
+</script>
+</body>
+</html>

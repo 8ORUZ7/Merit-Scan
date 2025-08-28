@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Registration Pending</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Pending page light customizations (re-using dashboard design system) */
+    .pending-wrapper { max-width:960px; margin:0 auto; }
+    .pending-head { margin:0 0 18px; }
+    .pending-intro { max-width:620px; font-size:.8rem; line-height:1.55; color:var(--text-soft); }
+    .reg-details-card {
+      background:var(--surface);
+      border:1px solid var(--border-color);
+      border-radius:var(--radius-lg);
+      padding:26px 28px 30px;
+      box-shadow:var(--shadow-1);
+      margin-top:26px;
+    }
+    .reg-details-card h3 {
+      margin:0 0 18px;
+      font-size:1.05rem;
+      font-weight:var(--fw-bold);
+      letter-spacing:.4px;
+    }
+    .readonly-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:18px 24px;
+    }
+    .readonly-item .label-inline {
+      font-size:.62rem;
+      font-weight:var(--fw-semibold);
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      display:block;
+      margin:0 0 6px 2px;
+      color:var(--text-soft);
+    }
+    .readonly-item .ro-input {
+      width:100%;
+      padding:10px 14px;
+      font-size:.73rem;
+      border:1px solid var(--border-color);
+      background:var(--surface-inset);
+      border-radius:var(--radius-md);
+      color:var(--text-color);
+      line-height:1.2;
+    }
+    .readonly-item .ro-input[readonly] { cursor:default; }
+    .id-block {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-start;
+    }
+    .id-preview {
+      width:110px; height:110px;
+      border-radius:12px;
+      object-fit:cover;
+      border:2px solid var(--color-primary);
+      background:var(--surface-inset);
+      box-shadow:0 2px 6px rgba(0,0,0,.08);
+    }
+    .status-badge-pending {
+      display:inline-block;
+      padding:6px 16px 7px;
+      background:linear-gradient(90deg,var(--color-warning),var(--color-warning-fg));
+      color:#fff; border-radius:var(--radius-pill);
+      font-size:.55rem; font-weight:var(--fw-bold);
+      letter-spacing:.8px; text-transform:uppercase;
+      box-shadow:var(--shadow-1);
+    }
+    @media (max-width:600px){
+      .reg-details-card { padding:22px 20px 26px; }
+    }
+  </style>
+</head>
+<body class="no-js">
+<a href="#mainContent" class="skip-link">Skip to content</a>
+
+<!-- Floating Sidebar Toggle (same pattern as dashboard) -->
+<button id="sidebarToggle"
+        class="nav-fab"
+        aria-label="Open navigation"
+        aria-controls="sidebar"
+        aria-expanded="false">
+  <span class="nav-fab__icon" aria-hidden="true">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </span>
+</button>
+
+<div class="app-container">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Merit Scan</span>
+    </div>
+    <div class="sidebar-profile">
+      <div class="profile-img">
+        <img id="profilePicSidebar" src="https://i.imgur.com/4Z5b1aH.png" alt="Admin Profile Picture">
+      </div>
+      <div class="profile-details">
+        <span class="profile-name" id="profileNameSidebar">Admin Account</span>
+        <span class="profile-status online" id="profileStatusSidebar">Online</span>
+      </div>
+    </div>
+    <ul class="sidebar-menu" role="menu">
+      <li class="sidebar-section">STATUS</li>
+      <li><a href="#" class="active" role="menuitem" aria-current="page">Waiting Area</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <button id="themeToggle" class="btn tiny ghost w-100" aria-pressed="false">Dark Mode</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent" tabindex="-1">
+    <header class="main-header">
+      <div class="header-left">
+        <span class="main-project">Admin Account</span>
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+          <ol class="breadcrumb-list">
+            <li><a href="#">Home</a></li>
+            <li aria-current="page">Waiting Area</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="profile-actions">
+        <button id="editProfileBtn" class="btn small">Edit Profile</button>
+        <button id="logoutBtn" class="btn small danger">Log Out</button>
+      </div>
+    </header>
+
+    <!-- Live announcements -->
+    <div class="visually-hidden" aria-live="polite" id="liveRegion"></div>
+
+    <section class="section-panel" aria-labelledby="pendingTitle">
+      <div class="pending-wrapper">
+        <h2 id="pendingTitle" class="pending-head">
+          Registration Pending
+          <span class="status-badge-pending" aria-label="Pending approval badge">Pending</span>
+        </h2>
+        <p class="pending-intro">
+          Your registration is under review. You will gain full dashboard functionality once the account is approved.
+          You can safely close this page; upon approval an update will be available on next sign in.
+        </p>
+
+        <div class="reg-details-card" aria-labelledby="detailsHeading">
+          <h3 id="detailsHeading">Submitted Registration Details</h3>
+          <div class="readonly-grid">
+            <div class="readonly-item">
+              <span class="label-inline">Name</span>
+              <input class="ro-input" value="Jane Doe" readonly>
+            </div>
+            <div class="readonly-item">
+              <span class="label-inline">Profession</span>
+              <input class="ro-input" value="Admin" readonly>
+            </div>
+            <div class="readonly-item">
+              <span class="label-inline">Email</span>
+              <input class="ro-input" type="email" value="jane.doe@schoola.com" readonly>
+            </div>
+            <div class="readonly-item">
+              <span class="label-inline">Password</span>
+              <input class="ro-input" type="password" value="********" readonly aria-label="Password (hidden)">
+            </div>
+            <div class="readonly-item">
+              <span class="label-inline">Level</span>
+              <input class="ro-input" value="High School" readonly>
+            </div>
+            <div class="readonly-item">
+              <span class="label-inline">School / Campus</span>
+              <input class="ro-input" value="School A" readonly>
+            </div>
+            <div class="readonly-item id-block">
+              <span class="label-inline">Uploaded Valid ID</span>
+              <img src="https://i.imgur.com/4Z5b1aH.png" alt="Uploaded ID preview" class="id-preview">
+            </div>
+          </div>
+          <div class="ms-actions mt-3">
+            <button type="button" id="refreshStatusBtn" class="ms-btn secondary">Check Status</button>
+            <button type="button" id="updateInfoBtn" class="ms-btn ghost">Update Info</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Edit Profile Modal (same skin as dashboard) -->
+    <div id="editProfileModal" class="modal" aria-hidden="true">
+      <div class="modal-content ms-modal-skin" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
+        <button class="close" id="closeModalBtn" aria-label="Close">&times;</button>
+        <h2 id="editProfileTitle" class="ms-modal-title">Edit Profile</h2>
+        <form id="editProfileForm" autocomplete="off">
+          <div class="ms-field">
+            <label for="editName">Name</label>
+            <input class="ms-input" type="text" id="editName" name="editName" required>
+          </div>
+          <div class="ms-field">
+            <label for="editProfilePic">Profile Picture</label>
+            <input class="ms-input" type="file" id="editProfilePic" name="editProfilePic" accept="image/*">
+            <small class="ms-help">(PNG/JPG, up to 2MB)</small>
+          </div>
+          <div class="ms-actions justify-end">
+            <button type="submit" class="ms-btn primary">Save Changes</button>
+            <button type="button" class="ms-btn neutral" id="cancelEditProfile">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Inline Update Info Modal (lazy injected) -->
+    <div id="modalContainer"></div>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  document.body.classList.remove('no-js');
+  const el = id => document.getElementById(id);
+  const live = el('liveRegion');
+  const announce = msg => { if(live){ live.textContent=''; setTimeout(()=>live.textContent=msg,10);} };
+
+  /* Theme sync (same key as dashboard) */
+  const THEME_KEY='ms-theme';
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    const btn = el('themeToggle');
+    if(btn){
+      btn.textContent = t==='dark' ? 'Light Mode':'Dark Mode';
+      btn.setAttribute('aria-pressed', t==='dark');
+    }
+  }
+  (function initTheme(){
+    let saved; try { saved = localStorage.getItem(THEME_KEY); } catch(_){}
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(saved || (prefersDark?'dark':'light'));
+    el('themeToggle')?.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur==='dark'?'light':'dark';
+      try { localStorage.setItem(THEME_KEY,next);} catch(_){}
+      applyTheme(next);
+      announce(`Theme switched to ${next}`);
+    });
+  })();
+
+  /* Sidebar toggle mimic (simple version) */
+  const body = document.body;
+  const toggleBtn = el('sidebarToggle');
+  const sidebar = el('sidebar');
+  function syncAria(){
+    const expanded = !body.classList.contains('sidebar-hidden');
+    toggleBtn.setAttribute('aria-expanded', expanded);
+    toggleBtn.setAttribute('aria-label', expanded ? 'Close navigation' : 'Open navigation');
+  }
+  toggleBtn.addEventListener('click', ()=>{
+    body.classList.toggle('sidebar-hidden');
+    body.classList.remove('sidebar-overlay'); // not needed for this minimal page
+    syncAria();
+  });
+  syncAria();
+
+  /* Edit Profile Modal behavior (mirrors dashboard) */
+  const editProfileModal = el('editProfileModal');
+  const editProfileBtn = el('editProfileBtn');
+  const closeModalBtn = el('closeModalBtn');
+  const cancelEditProfile = el('cancelEditProfile');
+  const editProfileForm = el('editProfileForm');
+  const profileNameSidebar = el('profileNameSidebar');
+  const profilePicSidebar = el('profilePicSidebar');
+
+  function trapFocus(modalEl){
+    const focusable = modalEl.querySelectorAll(
+      'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'
+    );
+    if(!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length-1];
+    modalEl.addEventListener('keydown', e=>{
+      if(e.key==='Tab'){
+        if(e.shiftKey && document.activeElement===first){
+          e.preventDefault(); last.focus();
+        } else if(!e.shiftKey && document.activeElement===last){
+          e.preventDefault(); first.focus();
+        }
+      } else if(e.key==='Escape'){
+        closeModal();
+      }
+    });
+  }
+
+  function openModal(){
+    editProfileModal.style.display='block';
+    editProfileModal.setAttribute('aria-hidden','false');
+    el('editName').value = profileNameSidebar.textContent;
+    trapFocus(editProfileModal.querySelector('.modal-content'));
+    editProfileModal.querySelector('input')?.focus({preventScroll:true});
+  }
+  function closeModal(){
+    editProfileModal.style.display='none';
+    editProfileModal.setAttribute('aria-hidden','true');
+    editProfileBtn.focus();
+  }
+
+  editProfileBtn.addEventListener('click', openModal);
+  closeModalBtn.addEventListener('click', closeModal);
+  cancelEditProfile.addEventListener('click', closeModal);
+  window.addEventListener('click', e=>{
+    if(e.target === editProfileModal) closeModal();
+  });
+
+  editProfileForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const newName = el('editName').value.trim();
+    if(newName) profileNameSidebar.textContent = newName;
+    const picInput = el('editProfilePic');
+    if(picInput.files && picInput.files[0]){
+      const reader = new FileReader();
+      reader.onload = ev => { profilePicSidebar.src = ev.target.result; };
+      reader.readAsDataURL(picInput.files[0]);
+    }
+    closeModal();
+    announce('Profile updated');
+  });
+
+  el('logoutBtn').addEventListener('click', ()=>{
+    if(confirm('Log out?')){
+      announce('Logged out');
+      location.reload();
+    }
+  });
+
+  /* Update Info modal (inline) */
+  const modalContainer = el('modalContainer');
+  el('updateInfoBtn').addEventListener('click', ()=>{
+    modalContainer.innerHTML = `
+      <div class="modal" style="display:block;">
+        <div class="modal-content ms-modal-skin" role="dialog" aria-modal="true" aria-label="Update Registration Info">
+          <button class="close" aria-label="Close" id="closeUpdateInfo">&times;</button>
+          <h2 class="ms-modal-title">Update Registration Info</h2>
+          <form id="updateInfoForm" autocomplete="off">
+            <div class="ms-field">
+              <label for="updLevel">Level</label>
+              <input id="updLevel" name="updLevel" class="ms-input" value="High School" required>
+            </div>
+            <div class="ms-field">
+              <label for="updSchool">School / Campus</label>
+              <input id="updSchool" name="updSchool" class="ms-input" value="School A" required>
+            </div>
+            <div class="ms-field">
+              <label for="updEmail">Email</label>
+              <input id="updEmail" type="email" name="updEmail" class="ms-input" value="jane.doe@schoola.com" required>
+            </div>
+            <div class="ms-actions justify-end">
+              <button type="submit" class="ms-btn primary">Save</button>
+              <button type="button" class="ms-btn neutral" id="cancelUpdateInfo">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>`;
+    const holder = modalContainer.querySelector('.modal');
+    const closeBtn = modalContainer.querySelector('#closeUpdateInfo');
+    const cancelBtn = modalContainer.querySelector('#cancelUpdateInfo');
+    const form = modalContainer.querySelector('#updateInfoForm');
+    function closeUpd(){
+      modalContainer.innerHTML='';
+      el('updateInfoBtn').focus();
+      announce('Update dialog closed');
+    }
+    closeBtn.addEventListener('click', closeUpd);
+    cancelBtn.addEventListener('click', closeUpd);
+    holder.addEventListener('click', e=>{
+      if(e.target === holder) closeUpd();
+    });
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      announce('Registration info updated (simulated)');
+      closeUpd();
+    });
+    trapFocus(holder.querySelector('.modal-content'));
+    form.querySelector('input')?.focus({preventScroll:true});
+  });
+
+  /* Check Status simulation */
+  el('refreshStatusBtn').addEventListener('click', ()=>{
+    const btn = el('refreshStatusBtn');
+    btn.disabled = true;
+    const old = btn.textContent;
+    btn.textContent = 'Checking...';
+    setTimeout(()=>{
+      btn.textContent = old;
+      btn.disabled = false;
+      announce('Status still pending (simulated)');
+    }, 1200);
+  });
+
+  /* Keyboard: close modals via ESC (already inside trap but ensure global) */
+  window.addEventListener('keydown', e=>{
+    if(e.key==='Escape'){
+      if(editProfileModal.style.display==='block') closeModal();
+      const inline = modalContainer.querySelector('.modal');
+      if(inline) inline.querySelector('.close')?.click();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
